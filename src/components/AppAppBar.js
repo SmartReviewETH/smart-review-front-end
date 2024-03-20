@@ -100,12 +100,22 @@ function AppAppBar({ mode, toggleColorMode }) {
               <Box sx={{ display: { xs: "none", md: "flex" } }}>
                 <MenuItem
                   onClick={() => {
-                    navigate("hub");
+                    navigate("smartReviewHub");
                   }}
                   sx={{ py: "6px", px: "12px" }}
                 >
                   <Typography variant="body2" color="text.primary">
-                    Hub
+                    SmartReview Hub
+                  </Typography>
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    navigate("reviewHub");
+                  }}
+                  sx={{ py: "6px", px: "12px" }}
+                >
+                  <Typography variant="body2" color="text.primary">
+                    Review Hub
                   </Typography>
                 </MenuItem>
                 <MenuItem

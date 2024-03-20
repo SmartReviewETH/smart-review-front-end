@@ -6,9 +6,10 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 
 import getLPTheme from "./Theme/getLPTheme";
 import Home from "./pages/Home";
-import HubPage from "./pages/Hub";
 import ProfilePage from "./pages/Profile";
 import AppAppBar from "./components/AppAppBar";
+import SmartReviewHubPage from "./pages/HubSmartReview";
+import ReviewHubPage from "./pages/HubReview";
 export default function App() {
   const [mode, setMode] = React.useState("light");
   const [showCustomTheme, setShowCustomTheme] = React.useState(true);
@@ -26,7 +27,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="profile" element={<ProfilePage />} />
-          <Route path="hub" element={<HubPage />} />
+          <Route path="smartReviewHub" element={<SmartReviewHubPage />} />
+          <Route path="reviewHub" element={<ReviewHubPage />} />
         </Routes>
       </ThemeProvider>
     </BrowserRouter>
