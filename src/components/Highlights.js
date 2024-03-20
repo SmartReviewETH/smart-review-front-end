@@ -6,48 +6,47 @@ import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import AutoFixHighRoundedIcon from "@mui/icons-material/AutoFixHighRounded";
-import ConstructionRoundedIcon from "@mui/icons-material/ConstructionRounded";
-import QueryStatsRoundedIcon from "@mui/icons-material/QueryStatsRounded";
 import SettingsSuggestRoundedIcon from "@mui/icons-material/SettingsSuggestRounded";
 import SupportAgentRoundedIcon from "@mui/icons-material/SupportAgentRounded";
 import ThumbUpAltRoundedIcon from "@mui/icons-material/ThumbUpAltRounded";
-
+import CurrencyBitcoinIcon from "@mui/icons-material/CurrencyBitcoin";
+import HubIcon from "@mui/icons-material/Hub";
 const items = [
   {
-    icon: <SettingsSuggestRoundedIcon />,
-    title: "Adaptable performance",
+    icon: <HubIcon />,
+    title: "Truly decentralized",
     description:
-      "Our product effortlessly adjusts to your needs, boosting efficiency and simplifying your tasks.",
+      "Experience true decentralization with on-chain governance, with no central authority.",
   },
   {
-    icon: <ConstructionRoundedIcon />,
-    title: "Built to last",
+    icon: <SettingsSuggestRoundedIcon />,
+    title: "Superb performance",
     description:
-      "Experience unmatched durability that goes above and beyond with lasting investment.",
+      "Our platform is designed to deliver exceptional performance, ensuring a seamless experience.",
   },
   {
     icon: <ThumbUpAltRoundedIcon />,
     title: "Great user experience",
     description:
-      "Integrate our product into your routine with an intuitive and easy-to-use interface.",
+      "We provide a user-friendly interface that is easy to navigate. Enjoy a smooth and intuitive experience.",
   },
   {
     icon: <AutoFixHighRoundedIcon />,
     title: "Innovative functionality",
     description:
-      "Stay ahead with features that set new standards, addressing your evolving needs better than the rest.",
+      "Discover innovative features that are designed to enhance your IPs review process.",
   },
   {
     icon: <SupportAgentRoundedIcon />,
-    title: "Reliable support",
+    title: "community support",
     description:
-      "Count on our responsive customer support, offering assistance that goes beyond the purchase.",
+      "Join a community of like-minded individuals who are passionate about IPs and decentralization.",
   },
   {
-    icon: <QueryStatsRoundedIcon />,
-    title: "Precision in every detail",
+    icon: <CurrencyBitcoinIcon />,
+    title: "Incentivized participation",
     description:
-      "Enjoy a meticulously crafted product where small touches make a significant impact on your overall experience.",
+      "Get rewarded for participating in the review process, and earn SmartToken(SMT) for your contributions.",
   },
 ];
 
@@ -81,9 +80,8 @@ export default function Highlights() {
             Highlights
           </Typography>
           <Typography variant="body1" sx={{ color: "grey.400" }}>
-            Explore why our product stands out: adaptability, durability,
-            user-friendly design, and innovation. Enjoy reliable customer
-            support and precision in every detail.
+            Explore why our SmartReview platform stands out: adaptability,
+            decentralization, reliability, user-friendly design, and innovation.
           </Typography>
         </Box>
         <Grid container spacing={2.5}>

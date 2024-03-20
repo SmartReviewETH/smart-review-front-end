@@ -5,6 +5,7 @@ import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import MyModal from "./Modal";
 
 export default function Hero() {
   return (
@@ -71,9 +72,7 @@ export default function Hero() {
             useFlexGap
             sx={{ pt: 2, width: { xs: "100%", sm: "auto" } }}
           >
-            <Button variant="contained" color="primary">
-              Upload IP Now
-            </Button>
+            <MyModal />
           </Stack>
         </Stack>
       </Container>

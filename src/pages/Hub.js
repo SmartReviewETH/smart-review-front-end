@@ -60,7 +60,7 @@ export default function ReviewHub() {
             color="text.secondary"
             sx={{ alignSelf: "center", width: { sm: "100%", md: "80%" } }}
           >
-            This is the central hub for all the SmartReviews in the community.
+            Central hub for all the IPs and Reviews in the SmartReview community
           </Typography>
         </Stack>
       </Container>
