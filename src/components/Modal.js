@@ -7,14 +7,22 @@ import { Modalstyle } from "./styles/styles";
 import { Alert, Stack, TextField } from "@mui/material";
 import { FileUploader } from "react-drag-drop-files";
 import moment from "moment";
+import { EtherContext } from "../App";
+import AutohideSnackbar from "./MySnackBar";
 
 export default function InitiationModal() {
   const date = new Date();
-
+  const { provider, walletAddress, SmartReviewContract } =
+    React.useContext(EtherContext);
   const currentDate = moment(date);
+  const [contact, setContract] = React.useState();
+  const [type, setType] = React.useState("success"); //["success", "error"]
+  const [ethprovider, setEthProvider] = React.useState();
   //form state
   const [open, setOpen] = React.useState(false);
-  const [issuer, setIssuer] = React.useState([]);
+  const [openSnackBar, setOpenSnackBar] = React.useState(false);
+  const [msg, setMsg] = React.useState("");
+  const [issuer, setIssuer] = React.useState("");
   const [bounty, setBounty] = React.useState(0);
   const [deadline, setDeadline] = React.useState(
     currentDate.format("YYYY-MM-DD")
@@ -23,7 +31,11 @@ export default function InitiationModal() {
   const [rqfile, setRqFile] = React.useState(null);
 
   const [submitFailed, setSubmitFailed] = React.useState(false);
-
+  React.useEffect(() => {
+    setIssuer(walletAddress);
+    setContract(SmartReviewContract);
+    setEthProvider(provider);
+  }, [walletAddress, SmartReviewContract, provider]);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleChangeIpFile = (file) => {
@@ -32,21 +44,56 @@ export default function InitiationModal() {
   const handleChangeRqFile = (file) => {
     setRqFile(file);
   };
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     if (iPfile === null || rqfile === null) {
       setSubmitFailed(true);
       return;
     }
     setSubmitFailed(false);
-    console.log(deadline, issuer, bounty, iPfile, rqfile);
+    const deadline_unix = moment(deadline).unix();
+
+    console.log(deadline_unix, issuer, bounty, iPfile, rqfile);
     // submit the form
     // upload the files to ipfs server
     // get the hash of the files
     // interact with the smart contract to initiate the smart review
+    if (contact && ethprovider) {
+      contact
+        .publishSmartReview([issuer], "234", "23423", deadline_unix, bounty)
+        .then((tx) => {
+          //action prior to transaction being mined
+          ethprovider.waitForTransaction(tx.hash).then(() => {
+            //action after transaction is mined
+            console.log("transaction hash", tx.hash);
+            setMsg(
+              `Smart Review Initiated Successfully! Transaction Hash: ${tx.hash}`
+            );
+            setOpenSnackBar(true);
+            setType("success");
+          });
+        })
+        .catch(() => {
+          //action to perform when user clicks "reject"
+          setMsg(`Smart Review Initiated Failure! User Rejected!`);
+          setOpenSnackBar(true);
+          setType("error");
+        });
+    } else {
+      setMsg(`Smart Review Initiated Failure! No wallet connected!`);
+      setOpenSnackBar(true);
+      setType("error");
+    }
+    setOpen(false);
   };
   return (
     <>
+      <AutohideSnackbar
+        isopen={openSnackBar}
+        setOpen={setOpenSnackBar}
+        msg={msg}
+        type={type}
+      />
       <Button variant="contained" color="primary" onClick={handleOpen}>
         Start A SmartReview Now
       </Button>

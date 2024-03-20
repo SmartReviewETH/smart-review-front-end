@@ -23,9 +23,9 @@ import MouseOverPopover from "./Popover";
 // };
 
 function AppAppBar({ mode, toggleColorMode }) {
-  const { provider, network } = React.useContext(EtherContext);
+  const { provider, network, walletAddress } = React.useContext(EtherContext);
   const [open, setOpen] = React.useState(false);
-  const [address, setAddress] = React.useState("");
+  // const [address, setAddress] = React.useState("");
   const navigate = useNavigate();
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -44,17 +44,17 @@ function AppAppBar({ mode, toggleColorMode }) {
       setOpen(false);
     }
   };
-  React.useEffect(() => {
-    async function getAddress() {
-      if (!provider) return;
-      const signer = provider.getSigner();
-      const address = await signer.getAddress();
-      setAddress(address);
-      return address;
-    }
+  // React.useEffect(() => {
+  //   async function getAddress() {
+  //     if (!provider) return;
+  //     const signer = provider.getSigner();
+  //     const address = await signer.getAddress();
+  //     setAddress(address);
+  //     return address;
+  //   }
 
-    getAddress();
-  }, [provider]);
+  //   getAddress();
+  // }, [provider]);
 
   return (
     <div>
@@ -159,8 +159,8 @@ function AppAppBar({ mode, toggleColorMode }) {
               <MouseOverPopover
                 text={provider ? `Wallet Connected` : "Wallet Not Connected"}
                 cotentText={
-                  address
-                    ? `connected to address: ${address} on ` + network
+                  walletAddress
+                    ? `connected to address: ${walletAddress} on ` + network
                     : "not connected to any wallet"
                 }
                 isSuccess={provider ? true : false}
@@ -247,10 +247,12 @@ function AppAppBar({ mode, toggleColorMode }) {
                         provider ? `Wallet Connected` : "Wallet Not Connected"
                       }
                       cotentText={
-                        address
-                          ? `connected to address: ${address} on ` + network
+                        walletAddress
+                          ? `connected to address: ${walletAddress} on ` +
+                            network
                           : "not connected to any wallet"
                       }
+                      isSuccess={provider ? true : false}
                     />
                   </MenuItem>
                 </Box>
