@@ -1,8 +1,10 @@
 import * as React from "react";
 import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
-
-export default function MouseOverPopover({ text, cotentText }) {
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { Stack } from "@mui/material";
+import ErrorIcon from "@mui/icons-material/Error";
+export default function MouseOverPopover({ text, cotentText, isSuccess }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handlePopoverOpen = (event) => {
@@ -16,8 +18,14 @@ export default function MouseOverPopover({ text, cotentText }) {
   const open = Boolean(anchorEl);
   const color = "text.primary";
   return (
-    <div>
+    <Stack
+      direction="row"
+      alignItems="center"
+      justifyContent="center"
+      spacing={1}
+    >
       <Typography
+        textAlign="center"
         variant="body2"
         color={color}
         aria-owns={open ? "mouse-over-popover" : undefined}
@@ -27,6 +35,8 @@ export default function MouseOverPopover({ text, cotentText }) {
       >
         {text}
       </Typography>
+      {isSuccess && <CheckCircleIcon color={"success"} />}
+      {!isSuccess && <ErrorIcon color={"error"} />}
       <Popover
         id="mouse-over-popover"
         sx={{
@@ -49,6 +59,6 @@ export default function MouseOverPopover({ text, cotentText }) {
           {cotentText}
         </Typography>
       </Popover>
-    </div>
+    </Stack>
   );
 }

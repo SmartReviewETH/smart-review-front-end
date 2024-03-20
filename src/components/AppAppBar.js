@@ -163,6 +163,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                     ? `connected to address: ${address} on ` + network
                     : "not connected to any wallet"
                 }
+                isSuccess={provider ? true : false}
               />
               {/* <Button
                 color="primary"
@@ -217,45 +218,40 @@ function AppAppBar({ mode, toggleColorMode }) {
                       toggleColorMode={toggleColorMode}
                     />
                   </Box>
-                  <MenuItem onClick={() => scrollToSection("features")}>
-                    Features
+
+                  <MenuItem
+                    onClick={() => {
+                      navigate("smartReviewHub");
+                    }}
+                  >
+                    SmartReview Hub
                   </MenuItem>
-                  <MenuItem onClick={() => scrollToSection("testimonials")}>
-                    Testimonials
+                  <MenuItem
+                    onClick={() => {
+                      navigate("reviewHub");
+                    }}
+                  >
+                    Review Hub
                   </MenuItem>
-                  <MenuItem onClick={() => scrollToSection("highlights")}>
-                    Highlights
-                  </MenuItem>
-                  <MenuItem onClick={() => scrollToSection("pricing")}>
-                    Pricing
-                  </MenuItem>
-                  <MenuItem onClick={() => scrollToSection("faq")}>
-                    FAQ
+                  <MenuItem
+                    onClick={() => {
+                      navigate("profile");
+                    }}
+                  >
+                    Profile
                   </MenuItem>
                   <Divider />
                   <MenuItem>
-                    <Button
-                      color="primary"
-                      variant="contained"
-                      component="a"
-                      // href="/material-ui/getting-started/templates/sign-up/"
-                      target="_blank"
-                      sx={{ width: "100%" }}
-                    >
-                      Sign up
-                    </Button>
-                  </MenuItem>
-                  <MenuItem>
-                    <Button
-                      color="primary"
-                      variant="outlined"
-                      component="a"
-                      // href="/material-ui/getting-started/templates/sign-in/"
-                      target="_blank"
-                      sx={{ width: "100%" }}
-                    >
-                      Sign in
-                    </Button>
+                    <MouseOverPopover
+                      text={
+                        provider ? `Wallet Connected` : "Wallet Not Connected"
+                      }
+                      cotentText={
+                        address
+                          ? `connected to address: ${address} on ` + network
+                          : "not connected to any wallet"
+                      }
+                    />
                   </MenuItem>
                 </Box>
               </Drawer>
