@@ -90,11 +90,11 @@ function AppAppBar({ mode, toggleColorMode }) {
                 }}
               >
                 <Typography
-                  variant="body1"
+                  variant="body2"
                   color="text.primary"
-                  sx={{ fontWeight: 500, fontSize: "1.5rem", margin: "12px" }}
+                  sx={{ fontWeight: 300, fontSize: "1.5rem", margin: "12px" }}
                 >
-                  Smart Review
+                  SmartReview
                 </Typography>
               </MenuItem>
               <Box sx={{ display: { xs: "none", md: "flex" } }}>

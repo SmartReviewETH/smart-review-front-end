@@ -62,8 +62,9 @@ export default function Hero() {
             color="text.secondary"
             sx={{ alignSelf: "center", width: { sm: "100%", md: "80%" } }}
           >
-            Explore our cutting-edge decentralized review platform, delivering
-            high-quality reviews tailored to your IPs.
+            Explore our cutting-edge decentralized IP review platform,
+            delivering high-quality reviews tailored to your IPs in a fast
+            manner.
           </Typography>
           <Stack
             direction={{ xs: "column", sm: "row" }}

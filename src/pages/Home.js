@@ -7,6 +7,7 @@ import Divider from "@mui/material/Divider";
 import Hero from "../components/Hero";
 import Highlights from "../components/Highlights";
 import AnimatedObject from "../components/animation/Animation";
+import Footer from "../components/Footer";
 
 export default function MainPage() {
   return (
@@ -18,6 +19,7 @@ export default function MainPage() {
         </Box>
         <Divider />
         <Highlights />
+        <Footer />
       </Box>
     </Box>
   );

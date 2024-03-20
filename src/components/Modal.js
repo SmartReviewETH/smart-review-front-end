@@ -141,7 +141,7 @@ export default function InitiationModal() {
                 />
               </Stack>
               <Stack direction="row" alignItems="center" spacing={5}>
-                <Button variant="outlined" color="primary" type="submit">
+                <Button variant="contained" color="primary" type="submit">
                   Submit
                 </Button>
                 <Button
