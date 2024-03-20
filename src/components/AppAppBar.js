@@ -13,6 +13,8 @@ import Drawer from "@mui/material/Drawer";
 import MenuIcon from "@mui/icons-material/Menu";
 import ToggleColorMode from "./ToggleColorMode";
 import { useNavigate } from "react-router-dom";
+import { EtherContext } from "../App";
+import MouseOverPopover from "./Popover";
 
 // const logoStyle = {
 //   width: "140px",
@@ -21,7 +23,9 @@ import { useNavigate } from "react-router-dom";
 // };
 
 function AppAppBar({ mode, toggleColorMode }) {
+  const { provider, network } = React.useContext(EtherContext);
   const [open, setOpen] = React.useState(false);
+  const [address, setAddress] = React.useState("");
   const navigate = useNavigate();
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -40,6 +44,17 @@ function AppAppBar({ mode, toggleColorMode }) {
       setOpen(false);
     }
   };
+  React.useEffect(() => {
+    async function getAddress() {
+      if (!provider) return;
+      const signer = provider.getSigner();
+      const address = await signer.getAddress();
+      setAddress(address);
+      return address;
+    }
+
+    getAddress();
+  }, [provider]);
 
   return (
     <div>
@@ -138,7 +153,18 @@ function AppAppBar({ mode, toggleColorMode }) {
               }}
             >
               <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
-              <Button
+              {/* <Typography variant="body2" color="text.primary">
+                {provider ? `Wallet Connected` : "Wallet Not Connected"}
+              </Typography> */}
+              <MouseOverPopover
+                text={provider ? `Wallet Connected` : "Wallet Not Connected"}
+                cotentText={
+                  address
+                    ? `connected to address: ${address} on ` + network
+                    : "not connected to any wallet"
+                }
+              />
+              {/* <Button
                 color="primary"
                 variant="text"
                 size="small"
@@ -147,8 +173,8 @@ function AppAppBar({ mode, toggleColorMode }) {
                 target="_blank"
               >
                 Sign in
-              </Button>
-              <Button
+              </Button> */}
+              {/* <Button
                 color="primary"
                 variant="contained"
                 size="small"
@@ -157,7 +183,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                 target="_blank"
               >
                 Sign up
-              </Button>
+              </Button> */}
             </Box>
             <Box sx={{ display: { sm: "", md: "none" } }}>
               <Button
