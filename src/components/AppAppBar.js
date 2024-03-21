@@ -25,36 +25,13 @@ import MouseOverPopover from "./Popover";
 function AppAppBar({ mode, toggleColorMode }) {
   const { provider, network, walletAddress } = React.useContext(EtherContext);
   const [open, setOpen] = React.useState(false);
-  // const [address, setAddress] = React.useState("");
   const navigate = useNavigate();
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
   };
 
-  const scrollToSection = (sectionId) => {
-    const sectionElement = document.getElementById(sectionId);
-    const offset = 128;
-    if (sectionElement) {
-      const targetScroll = sectionElement.offsetTop - offset;
-      sectionElement.scrollIntoView({ behavior: "smooth" });
-      window.scrollTo({
-        top: targetScroll,
-        behavior: "smooth",
-      });
-      setOpen(false);
-    }
-  };
-  // React.useEffect(() => {
-  //   async function getAddress() {
-  //     if (!provider) return;
-  //     const signer = provider.getSigner();
-  //     const address = await signer.getAddress();
-  //     setAddress(address);
-  //     return address;
-  //   }
 
-  //   getAddress();
-  // }, [provider]);
+
 
   return (
     <div>

@@ -9,6 +9,8 @@ import { FileUploader } from "react-drag-drop-files";
 import moment from "moment";
 import { EtherContext } from "../App";
 import AutohideSnackbar from "./MySnackBar";
+import { Ipfsuploader } from "../utils/helper";
+import CircularIndeterminate from "./LoadingCircle";
 
 export default function InitiationModal() {
   const date = new Date();
@@ -20,6 +22,7 @@ export default function InitiationModal() {
   const [ethprovider, setEthProvider] = React.useState();
   //form state
   const [open, setOpen] = React.useState(false);
+  const [pending, setPending] = React.useState(false);
   const [openSnackBar, setOpenSnackBar] = React.useState(false);
   const [msg, setMsg] = React.useState("");
   const [issuer, setIssuer] = React.useState("");
@@ -45,22 +48,38 @@ export default function InitiationModal() {
     setRqFile(file);
   };
   const handleSubmit = async (event) => {
+    // submit the form
     event.preventDefault();
     if (iPfile === null || rqfile === null) {
+      // must upload both files
       setSubmitFailed(true);
       return;
     }
     setSubmitFailed(false);
-    const deadline_unix = moment(deadline).unix();
+    if (!ethprovider) {
+      setMsg(`Smart Review Initiation Failure! No wallet connected!`);
+      setOpenSnackBar(true);
+      setType("error");
+      return;
+    }
 
-    console.log(deadline_unix, issuer, bounty, iPfile, rqfile);
-    // submit the form
+    setPending(true);
+    const deadline_unix = moment(deadline).unix();
     // upload the files to ipfs server
+    const ipfile_result = await Ipfsuploader(iPfile, "this is a IP file");
+    const rqfile_result = await Ipfsuploader(
+      rqfile,
+      "this is a requirement file"
+    );
     // get the hash of the files
+    const ipCid = ipfile_result.ipnft;
+    const rqCid = rqfile_result.ipnft;
+    console.log([issuer], ipCid, rqCid, deadline_unix, bounty);
+
     // interact with the smart contract to initiate the smart review
-    if (contact && ethprovider) {
+    if (contact && ethprovider && ipCid && rqCid) {
       contact
-        .publishSmartReview([issuer], "234", "23423", deadline_unix, bounty)
+        .publishSmartReview([issuer], ipCid, rqCid, deadline_unix, bounty)
         .then((tx) => {
           //action prior to transaction being mined
           ethprovider.waitForTransaction(tx.hash).then(() => {
@@ -71,20 +90,18 @@ export default function InitiationModal() {
             );
             setOpenSnackBar(true);
             setType("success");
+            //upload finished
+            setPending(false);
+            setOpen(false);
           });
         })
         .catch(() => {
           //action to perform when user clicks "reject"
-          setMsg(`Smart Review Initiated Failure! User Rejected!`);
+          setMsg(`Smart Review Initiation Failure! User Rejected!`);
           setOpenSnackBar(true);
           setType("error");
         });
-    } else {
-      setMsg(`Smart Review Initiated Failure! No wallet connected!`);
-      setOpenSnackBar(true);
-      setType("error");
     }
-    setOpen(false);
   };
   return (
     <>
@@ -187,18 +204,22 @@ export default function InitiationModal() {
                   required
                 />
               </Stack>
-              <Stack direction="row" alignItems="center" spacing={5}>
-                <Button variant="contained" color="primary" type="submit">
-                  Submit
-                </Button>
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  onClick={handleClose}
-                >
-                  Cancel
-                </Button>
-              </Stack>
+              {pending ? (
+                <CircularIndeterminate />
+              ) : (
+                <Stack direction="row" alignItems="center" spacing={5}>
+                  <Button variant="contained" color="primary" type="submit">
+                    Submit
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={handleClose}
+                  >
+                    Cancel
+                  </Button>
+                </Stack>
+              )}
             </Stack>
           </form>
         </Box>
