@@ -17,10 +17,10 @@ export default function InitiationModal() {
   const { provider, walletAddress, SmartReviewContract } =
     React.useContext(EtherContext);
   const currentDate = moment(date);
+  //states
   const [contact, setContract] = React.useState();
   const [type, setType] = React.useState("success"); //["success", "error"]
   const [ethprovider, setEthProvider] = React.useState();
-  //form state
   const [open, setOpen] = React.useState(false);
   const [pending, setPending] = React.useState(false);
   const [openSnackBar, setOpenSnackBar] = React.useState(false);
@@ -32,13 +32,14 @@ export default function InitiationModal() {
   );
   const [iPfile, setIPFile] = React.useState(null);
   const [rqfile, setRqFile] = React.useState(null);
-
   const [submitFailed, setSubmitFailed] = React.useState(false);
+  //useeffect
   React.useEffect(() => {
     setIssuer(walletAddress);
     setContract(SmartReviewContract);
     setEthProvider(provider);
   }, [walletAddress, SmartReviewContract, provider]);
+  //handlers
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleChangeIpFile = (file) => {
@@ -85,6 +86,7 @@ export default function InitiationModal() {
           ethprovider.waitForTransaction(tx.hash).then(() => {
             //action after transaction is mined
             console.log("transaction hash", tx.hash);
+            // alert
             setMsg(
               `Smart Review Initiated Successfully! Transaction Hash: ${tx.hash}`
             );
@@ -97,9 +99,12 @@ export default function InitiationModal() {
         })
         .catch(() => {
           //action to perform when user clicks "reject"
+          // alert
           setMsg(`Smart Review Initiation Failure! User Rejected!`);
           setOpenSnackBar(true);
           setType("error");
+          setOpen(false);
+          setPending(false);
         });
     }
   };
