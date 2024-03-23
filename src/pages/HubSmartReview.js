@@ -11,37 +11,12 @@ export default function SmartReviewHubPage() {
   const { provider,SmartReviewContract } = React.useContext(EtherContext);
   const phaseMapping = {0:"ACTIVE", 1:"PAUSED", 2:"EXPIRED", 3:"PAID"}
   const [isFetching, setIsFetching] = React.useState(true);
-  const [data, setData] = React.useState([
-    {
-      id: 1,
-      title: "title1",
-      status: "Active",
-      description: "here is some description",
-    },
-    {
-      id: 2,
-      title: "title1",
-      status: "Active",
-      description: "here is some description2",
-    },
-    {
-      id: 3,
-      title: "title1",
-      status: "Active",
-      description: "here is some description2",
-    },
-    {
-      id: 4,
-      title: "title1",
-      status: "Active",
-      description: "here is some description2",
-    },
-  ]); // data from the contract
+  const [data, setData] = React.useState(); // data from the contract
   React.useEffect(() => { 
     // fetch data from the contract
     async function fetchData() {
       if (!SmartReviewContract) return;
-      console.log("fetching data from the contract")
+      console.log("fetching data from the contract");
       const response = await SmartReviewContract.getSmartReviewsCount();
       const smartReviewcount = Number(response._hex);
       console.log("total smart reviews count: ", Number(response._hex));
@@ -49,17 +24,24 @@ export default function SmartReviewHubPage() {
       // get all the smart reviews
       for (let i = 0; i < smartReviewcount; i++) {
         let dataObj = {};
-        const smartReview = await SmartReviewContract.getSmartReviewById(i.toString());
+        const smartReview = await SmartReviewContract.getSmartReviewById(
+          i.toString()
+        );
         dataObj.id = i;
-        dataObj.status =phaseMapping[smartReview.phase];
+        dataObj.status = phaseMapping[smartReview.phase];
         dataObj.title = smartReview.title || "No title provided";
-        dataObj.description = smartReview.description || "No description provided";
-        dataObj.bountyAmount = convertBigNumberToEtherString(smartReview.bountyAmount);
+        dataObj.description =
+          smartReview.description || "No description provided";
+        dataObj.bountyAmount = convertBigNumberToEtherString(
+          smartReview.bountyAmount
+        );
         dataObj.deadline = convertBigNumberToEtherString(smartReview.deadline);
         dataObj.issuers = smartReview.issuers;
         dataObj.requirementsHash = smartReview.requirementsHash;
         dataObj.ipHash = smartReview.ipHash;
-        dataObj.currentBalance = convertBigNumberToEtherString(smartReview.currentBalance);
+        dataObj.currentBalance = convertBigNumberToEtherString(
+          smartReview.currentBalance
+        );
         allData.push(dataObj);
       }
       console.log("allData: ", allData);
@@ -73,7 +55,7 @@ export default function SmartReviewHubPage() {
       <PageHeader
         title_front={"SmartReview"}
         title_back={"Hub"}
-        subtitle="Central hub for all the IPs in our SmartReview community. Review amazing works and earn rewards!"
+        subtitle="Central hub for the SmartReview community. Review or contribute to all the amazing works and earn rewards!"
       />
       {!provider && <Typography variant="h4" textAlign="center">Opps, please connect to your wallet first to view all the contents here.</Typography>}
       {isFetching && provider && (<Typography variant="h4" textAlign="center">Fetching data from the contract...</Typography>)}
