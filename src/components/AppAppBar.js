@@ -1,6 +1,6 @@
 import * as React from "react";
 import PropTypes from "prop-types";
-
+import { useTheme } from '@mui/material/styles';
 import Box from "@mui/material/Box";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -16,11 +16,11 @@ import { useNavigate } from "react-router-dom";
 import { EtherContext } from "../App";
 import MouseOverPopover from "./Popover";
 
-// const logoStyle = {
-//   width: "140px",
-//   height: "auto",
-//   cursor: "pointer",
-// };
+const logoStyle = {
+  width: "140px",
+  height: "auto",
+  cursor: "pointer",
+};
 
 function AppAppBar({ mode, toggleColorMode }) {
   const { provider, network, walletAddress } = React.useContext(EtherContext);
@@ -29,9 +29,8 @@ function AppAppBar({ mode, toggleColorMode }) {
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
   };
-
-
-
+  const theme = useTheme();
+  
 
   return (
     <div>
@@ -81,13 +80,21 @@ function AppAppBar({ mode, toggleColorMode }) {
                   navigate("/");
                 }}
               >
-                <Typography
-                  variant="body2"
-                  color="text.primary"
-                  sx={{ fontWeight: 300, fontSize: "1.5rem", margin: "12px" }}
+                <Box
+                  sx={{
+                    flexGrow: 1,
+                    display: "flex",
+                    alignItems: "center",
+                    ml: "-16px",
+                    px: 0,
+                  }}
                 >
-                  SmartReview
-                </Typography>
+                  <img
+                    src={theme.palette.mode ==="light"?require("../assets/logo_no_back.png"):require("../assets/logo_no_back_dark.png")}
+                    style={logoStyle}
+                    alt="logo of smart review"
+                  />
+                </Box>
               </MenuItem>
               <Box sx={{ display: { xs: "none", md: "flex" } }}>
                 <MenuItem
