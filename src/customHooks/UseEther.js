@@ -42,8 +42,8 @@ export function useEther() {
       );
       console.log(contract);
       setSmartReviewContract(contract);
-      const response = await contract.getSmartReviewsCount();
-      console.log("total smart reviews count: ", Number(response._hex));
+
+      
     }
 
     getAddress();
