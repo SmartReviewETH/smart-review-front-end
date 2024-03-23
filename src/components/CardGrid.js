@@ -30,7 +30,7 @@ export default function BasicCard({data}) {
           </Typography>
           <Typography variant="body2">Status: {data.status}</Typography>
           <Typography variant="body2">
-            Issuers: {data.issuers.map((issuer) => issuer + "\n")}
+            Issuers: {data.issuers?.map((issuer) => issuer + "\n")}
           </Typography>
           <Typography variant="body2">
             Bounty: {data.bountyAmount} SMT

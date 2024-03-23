@@ -8,7 +8,7 @@ export function convertBigNumberToEtherString(bigNumber) {
   return Number(bigNumber._hex);
 }
 export default function SmartReviewHubPage() {
-  const { SmartReviewContract } = React.useContext(EtherContext);
+  const { provider,SmartReviewContract } = React.useContext(EtherContext);
   const phaseMapping = {0:"ACTIVE", 1:"PAUSED", 2:"EXPIRED", 3:"PAID"}
   const [isFetching, setIsFetching] = React.useState(true);
   const [data, setData] = React.useState([
@@ -75,9 +75,9 @@ export default function SmartReviewHubPage() {
         title_back={"Hub"}
         subtitle="Central hub for all the IPs in our SmartReview community. Review amazing works and earn rewards!"
       />
-      {isFetching ? (<Typography variant="h4">Fetching data from the contract...</Typography>):( <CardGrid
-        data_array={data}
-      />)}
+      {!provider && <Typography variant="h4" textAlign="center">Opps, please connect to your wallet first to view all the contents here.</Typography>}
+      {isFetching && provider && (<Typography variant="h4" textAlign="center">Fetching data from the contract...</Typography>)}
+      {!isFetching && provider && (<CardGrid data_array={data}/>)}
      
     </Stack>
   );
