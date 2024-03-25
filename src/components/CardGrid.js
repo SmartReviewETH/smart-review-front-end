@@ -1,6 +1,5 @@
 
 import * as React from 'react';
-import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -8,6 +7,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { Grid } from '@mui/material';
 import {ContributeModal} from './ContributeModal';
+import moment from 'moment';
 export function CardGrid({ data_array }) {
     return (
       <Grid container direction="row" spacing={3} alignItems="center" width={{ xs:"100%",sm: "80%"}} >
@@ -43,16 +43,24 @@ export default function BasicCard({ data }) {
               Issuers: {data.issuers?.map((issuer) => issuer + "\n")}
             </Typography>
 
-            <Typography variant="body2" sx={{ mb: 2 }}>
+            <Typography variant="body2">
               Bounty: {data.bountyAmount} SMT | Balance: {data.currentBalance}{" "}
               SMT
             </Typography>
+            <Typography variant="body2">
+              Deadline: {moment.unix(data.deadline).format("MM/DD/YYYY")}
+            </Typography>
 
-            <Typography variant="body1">{data.description}</Typography>
+            <Typography variant="body1" sx={{ mt: 2 }}>
+              {data.description}
+            </Typography>
           </CardContent>
           <CardActions>
             <Button size="small" color="info" variant="contained">
-              More Details
+              Reviews
+            </Button>
+            <Button size="small" color="secondary" variant="contained">
+              Download Files
             </Button>
             <Button
               size="small"
