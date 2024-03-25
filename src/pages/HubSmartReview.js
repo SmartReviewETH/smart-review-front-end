@@ -3,6 +3,8 @@ import PageHeader from "../components/Pageheader";
 import { Card, Grid, Stack, Typography } from "@mui/material";
 import { CardGrid } from "../components/CardGrid";
 import { EtherContext } from "../App";
+import { ethers } from "ethers";
+import { converWeiToEther } from "../utils/helper";
 
 export function convertBigNumberToEtherString(bigNumber) {
   return Number(bigNumber._hex);
@@ -12,7 +14,7 @@ export default function SmartReviewHubPage() {
   const phaseMapping = {0:"ACTIVE", 1:"PAUSED", 2:"EXPIRED", 3:"PAID"}
   const [isFetching, setIsFetching] = React.useState(true);
   const [data, setData] = React.useState(); // data from the contract
-  React.useEffect(() => { 
+  React.useEffect(() => {
     // fetch data from the contract
     async function fetchData() {
       if (!SmartReviewContract) return;
@@ -33,16 +35,19 @@ export default function SmartReviewHubPage() {
         dataObj.title = smartReview.title || "No title provided";
         dataObj.description =
           smartReview.description || "No description provided";
-        dataObj.bountyAmount = convertBigNumberToEtherString(
+        let WeiToEther = convertBigNumberToEtherString(
           smartReview.bountyAmount
         );
+        WeiToEther = converWeiToEther(WeiToEther.toString());
+        dataObj.bountyAmount = WeiToEther;
         dataObj.deadline = convertBigNumberToEtherString(smartReview.deadline);
         dataObj.issuers = smartReview.issuers;
         dataObj.requirementsHash = smartReview.requirementsHash;
         dataObj.ipHash = smartReview.ipHash;
-        dataObj.currentBalance = convertBigNumberToEtherString(
-          smartReview.currentBalance
-        );
+        WeiToEther = convertBigNumberToEtherString(smartReview.currentBalance);
+        WeiToEther = converWeiToEther(WeiToEther.toString());
+
+        dataObj.currentBalance = WeiToEther;
         dataObj.title = smartReview.info[0];
         dataObj.description = smartReview.info[1];
         allData.push(dataObj);

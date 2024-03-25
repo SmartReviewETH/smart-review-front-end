@@ -9,7 +9,7 @@ import { FileUploader } from "react-drag-drop-files";
 import moment from "moment";
 import { EtherContext } from "../App";
 import AutohideSnackbar from "./MySnackBar";
-import { Ipfsuploader } from "../utils/helper";
+import { Ipfsuploader, convertEthertoWei } from "../utils/helper";
 import CircularIndeterminate from "./LoadingCircle";
 
 export default function InitiationModal() {
@@ -17,16 +17,18 @@ export default function InitiationModal() {
   const { provider, walletAddress, SmartReviewContract } =
     React.useContext(EtherContext);
   const currentDate = moment(date);
-  //states
+  //web3 states
   const [contact, setContract] = React.useState();
-  const [type, setType] = React.useState("success"); //["success", "error"]
+  const [issuer, setIssuer] = React.useState("");
   const [ethprovider, setEthProvider] = React.useState();
+
+  const [type, setType] = React.useState("success"); //["success", "error"]
   const [open, setOpen] = React.useState(false);
   const [pending, setPending] = React.useState(false);
   const [openSnackBar, setOpenSnackBar] = React.useState(false);
   const [msg, setMsg] = React.useState("");
-  const [issuer, setIssuer] = React.useState("");
-  const [bounty, setBounty] = React.useState(0);
+
+  const [bounty, setBounty] = React.useState("1");
   const [title, setTitle] = React.useState("");
   const [description, setDiscription] = React.useState("");
   const [deadline, setDeadline] = React.useState(
@@ -78,11 +80,11 @@ export default function InitiationModal() {
     const ipCid = ipfile_result.ipnft;
     const rqCid = rqfile_result.ipnft;
     console.log([issuer], ipCid, rqCid, deadline_unix, bounty);
-
+    let bount_in_wei = convertEthertoWei(bounty);
     // interact with the smart contract to initiate the smart review
     if (contact && ethprovider && ipCid && rqCid) {
       contact
-        .publishSmartReview([issuer], ipCid, rqCid, deadline_unix, bounty, [
+        .publishSmartReview([issuer], ipCid, rqCid, deadline_unix, bount_in_wei, [
           title,
           description,
         ])
@@ -222,7 +224,7 @@ export default function InitiationModal() {
                   color="secondary"
                   type="number"
                   InputProps={{
-                    inputProps: { min: 1 },
+                    inputProps: { min: "1" },
                   }}
                   value={bounty}
                   fullWidth
