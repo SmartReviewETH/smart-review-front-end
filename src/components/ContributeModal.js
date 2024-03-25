@@ -1,6 +1,6 @@
 import {  Modal, Button, Box, Typography, Stack, TextField } from '@mui/material';
 import React from 'react';
-import { Modalstyle2 } from './styles/styles';
+import { Modalstyle } from './styles/styles';
 import CircularIndeterminate from './LoadingCircle';
 import { EtherContext } from '../App';
 import AutohideSnackbar from './MySnackBar';
@@ -76,7 +76,7 @@ export function ContributeModal({ open, onClose, title, id }){
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={Modalstyle2}>
+        <Box sx={Modalstyle}>
           <form onSubmit={handleSubmit}>
             <Stack
               direction="column"
