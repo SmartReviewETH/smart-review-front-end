@@ -27,6 +27,8 @@ export default function InitiationModal() {
   const [msg, setMsg] = React.useState("");
   const [issuer, setIssuer] = React.useState("");
   const [bounty, setBounty] = React.useState(0);
+  const [title, setTitle] = React.useState("");
+  const [description, setDiscription] = React.useState("");
   const [deadline, setDeadline] = React.useState(
     currentDate.format("YYYY-MM-DD")
   );
@@ -80,7 +82,10 @@ export default function InitiationModal() {
     // interact with the smart contract to initiate the smart review
     if (contact && ethprovider && ipCid && rqCid) {
       contact
-        .publishSmartReview([issuer], ipCid, rqCid, deadline_unix, bounty)
+        .publishSmartReview([issuer], ipCid, rqCid, deadline_unix, bounty, [
+          title,
+          description,
+        ])
         .then((tx) => {
           //action prior to transaction being mined
           ethprovider.waitForTransaction(tx.hash).then(() => {
@@ -139,6 +144,7 @@ export default function InitiationModal() {
             >
               Initiate Your SmartReview
             </Typography>
+
             <Stack
               direction="column"
               justifyContent="center"
@@ -146,14 +152,44 @@ export default function InitiationModal() {
               spacing={2}
             >
               <Stack direction="column" alignItems="center" spacing={1}>
-                <Typography variant="h6">Upload your IP file*</Typography>
+                <Typography variant="subtitle2" textAlign="center">
+                  Title*
+                </Typography>
+                <TextField
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                  variant="outlined"
+                  color="secondary"
+                  type="string"
+                  fullWidth
+                  value={title}
+                />
+              </Stack>
+              <Stack direction="column" alignItems="center" spacing={1}>
+                <Typography variant="subtitle2" textAlign="center">
+                  Description*
+                </Typography>
+                <TextField
+                  onChange={(e) => setDiscription(e.target.value)}
+                  required
+                  variant="outlined"
+                  color="secondary"
+                  type="string"
+                  fullWidth
+                  value={description}
+                />
+              </Stack>
+              <Stack direction="column" alignItems="center" spacing={1}>
+                <Typography variant="subtitle2">
+                  Upload your IP file*
+                </Typography>
                 <FileUploader
                   handleChange={handleChangeIpFile}
                   name="ip file"
                 />
               </Stack>
               <Stack direction="column" alignItems="center" spacing={1}>
-                <Typography variant="subtitle1" textAlign="center">
+                <Typography variant="subtitle2" textAlign="center">
                   Upload Requirements file*
                 </Typography>
                 <FileUploader
@@ -162,7 +198,7 @@ export default function InitiationModal() {
                 />
               </Stack>
               <Stack direction="column" alignItems="center" spacing={1}>
-                <Typography variant="subtitle1" textAlign="center">
+                <Typography variant="subtitle2" textAlign="center">
                   Add Issuers' Addresses*
                 </Typography>
                 <TextField
@@ -176,7 +212,7 @@ export default function InitiationModal() {
                 />
               </Stack>
               <Stack direction="column" alignItems="center" spacing={1}>
-                <Typography variant="subtitle1" textAlign="center">
+                <Typography variant="subtitle2" textAlign="center">
                   Set Bounty Amount(Smart Tokens)*
                 </Typography>
                 <TextField
@@ -193,7 +229,7 @@ export default function InitiationModal() {
                 />
               </Stack>
               <Stack direction="column" alignItems="center" spacing={1}>
-                <Typography variant="subtitle1" textAlign="center">
+                <Typography variant="subtitle2" textAlign="center">
                   Set Expire Date*
                 </Typography>
                 <TextField

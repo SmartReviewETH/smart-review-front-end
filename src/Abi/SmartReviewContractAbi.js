@@ -525,6 +525,11 @@ export const smartReviewContractAbi = [
             name: "currentBalance",
             type: "uint256",
           },
+          {
+            internalType: "string[2]",
+            name: "info",
+            type: "string[2]",
+          },
         ],
         internalType: "struct SmartReviewContract.SmartReview",
         name: "",
@@ -597,6 +602,11 @@ export const smartReviewContractAbi = [
         internalType: "uint256",
         name: "bountyAmount",
         type: "uint256",
+      },
+      {
+        internalType: "string[2]",
+        name: "info",
+        type: "string[2]",
       },
     ],
     name: "publishSmartReview",

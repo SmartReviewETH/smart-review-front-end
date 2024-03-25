@@ -36,7 +36,7 @@ export function useEther() {
       if (!provider) return;
       const signer = provider.getSigner();
       const contract = new ethers.Contract(
-        "0x0a8FEDEbcfC750F81dE3AcA118fFF855360066B2",
+        "0xDCb2C1F4f07798a9f1e611d0db9091424a81C4F4",
         smartReviewContractAbi,
         signer
       );

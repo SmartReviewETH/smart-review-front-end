@@ -27,6 +27,7 @@ export default function SmartReviewHubPage() {
         const smartReview = await SmartReviewContract.getSmartReviewById(
           i.toString()
         );
+
         dataObj.id = i;
         dataObj.status = phaseMapping[smartReview.phase];
         dataObj.title = smartReview.title || "No title provided";
@@ -42,6 +43,8 @@ export default function SmartReviewHubPage() {
         dataObj.currentBalance = convertBigNumberToEtherString(
           smartReview.currentBalance
         );
+        dataObj.title = smartReview.info[0];
+        dataObj.description = smartReview.info[1];
         allData.push(dataObj);
       }
       console.log("allData: ", allData);
