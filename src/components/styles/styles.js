@@ -20,7 +20,7 @@ const Modalstyle = {
   border: "2px solid #000",
   boxShadow: 24,
   p: 4,
-  height: "85%",
+  maxHeight: "90%",
   overflow: "auto",
 };
 const Modalstyle2 = {
