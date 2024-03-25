@@ -20,6 +20,8 @@ const Modalstyle = {
   border: "2px solid #000",
   boxShadow: 24,
   p: 4,
+  height: "85%",
+  overflow: "auto",
 };
 const FormStyle = {
   position: "absolute",

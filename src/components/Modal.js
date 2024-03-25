@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { Modalstyle } from "./styles/styles";
-import { Alert, Stack, TextField } from "@mui/material";
+import { Alert, FormControl, Stack, TextField } from "@mui/material";
 import { FileUploader } from "react-drag-drop-files";
 import moment from "moment";
 import { EtherContext } from "../App";
@@ -230,7 +230,7 @@ export default function InitiationModal() {
                   fullWidth
                 />
               </Stack>
-              <Stack direction="column" alignItems="center" spacing={1}>
+              <Stack direction="column" alignItems="center" spacing={1} mb={2}>
                 <Typography variant="subtitle2" textAlign="center">
                   Set Expire Date*
                 </Typography>
