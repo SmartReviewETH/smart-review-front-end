@@ -8,18 +8,25 @@ import Typography from '@mui/material/Typography';
 import { Grid } from '@mui/material';
 import {ContributeModal} from './ContributeModal';
 import moment from 'moment';
+import { ReviewsModal } from "./ReviewsModal";
 export function CardGrid({ data_array }) {
-    return (
-      <Grid container direction="row" spacing={3} alignItems="center" width={{ xs:"100%",sm: "80%"}} >
-          {data_array.map((data) => {
-              return <BasicCard data={data} />
-          })}
-        </Grid>
-       
-    );
+  return (
+    <Grid
+      container
+      direction="row"
+      spacing={3}
+      alignItems="center"
+      width={{ xs: "100%", sm: "80%" }}
+    >
+      {data_array.map((data) => {
+        return <BasicCard data={data} />;
+      })}
+    </Grid>
+  );
 }
 export default function BasicCard({ data }) {
   const [open, setOpen] = React.useState(false);
+  const [openReview, setOpenReview] = React.useState(false);
   return (
     <>
       <ContributeModal
@@ -29,6 +36,14 @@ export default function BasicCard({ data }) {
         title={data.title}
         id={data.id}
       />
+      <ReviewsModal
+        key={"Reviewmodal" + data.id}
+        open={openReview}
+        onClose={() => setOpenReview(false)}
+        title={data.title}
+        id={data.id}
+      />
+
       <Grid key={data.id} minWidth={380} item xs={12} sm={4} md={4} padding={1}>
         <Card>
           <CardContent>
@@ -56,7 +71,12 @@ export default function BasicCard({ data }) {
             </Typography>
           </CardContent>
           <CardActions>
-            <Button size="small" color="info" variant="contained">
+            <Button
+              size="small"
+              color="info"
+              variant="contained"
+              onClick={() => setOpenReview(true)}
+            >
               Reviews
             </Button>
             <Button size="small" color="secondary" variant="contained">
@@ -75,5 +95,4 @@ export default function BasicCard({ data }) {
       </Grid>
     </>
   );
-  
 }
