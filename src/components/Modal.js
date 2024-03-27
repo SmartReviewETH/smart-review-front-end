@@ -80,7 +80,7 @@ export default function InitiationModal() {
     const ipCid = ipfile_result.ipnft;
     const rqCid = rqfile_result.ipnft;
     console.log([issuer], ipCid, rqCid, deadline_unix, bounty);
-    let bount_in_wei = convertEthertoWei(bounty);
+    let bount_in_wei = convertEthertoWei(bounty).toString();
     // interact with the smart contract to initiate the smart review
     if (contact && ethprovider && ipCid && rqCid) {
       contact

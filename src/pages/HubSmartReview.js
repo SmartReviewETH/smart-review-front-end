@@ -26,31 +26,41 @@ export default function SmartReviewHubPage() {
       // get all the smart reviews
       for (let i = 0; i < smartReviewcount; i++) {
         let dataObj = {};
-        const smartReview = await SmartReviewContract.getSmartReviewById(
-          i.toString()
-        );
+        try {
+          const smartReview = await SmartReviewContract.getSmartReviewById(
+            i.toString()
+          );
+          dataObj.id = i;
+          dataObj.status = phaseMapping[smartReview.phase];
+          dataObj.title = smartReview.title || "No title provided";
+          dataObj.description =
+            smartReview.description || "No description provided";
+          let WeiToEther = convertBigNumberToEtherString(
+            smartReview.bountyAmount
+          );
+          WeiToEther = converWeiToEther(WeiToEther.toString());
+          dataObj.bountyAmount = WeiToEther;
+          dataObj.deadline = convertBigNumberToEtherString(
+            smartReview.deadline
+          );
+          dataObj.issuers = smartReview.issuers;
+          dataObj.requirementsHash = smartReview.requirementsHash;
+          dataObj.ipHash = smartReview.ipHash;
+          WeiToEther = convertBigNumberToEtherString(
+            smartReview.currentBalance
+          );
+          WeiToEther = converWeiToEther(WeiToEther.toString());
 
-        dataObj.id = i;
-        dataObj.status = phaseMapping[smartReview.phase];
-        dataObj.title = smartReview.title || "No title provided";
-        dataObj.description =
-          smartReview.description || "No description provided";
-        let WeiToEther = convertBigNumberToEtherString(
-          smartReview.bountyAmount
-        );
-        WeiToEther = converWeiToEther(WeiToEther.toString());
-        dataObj.bountyAmount = WeiToEther;
-        dataObj.deadline = convertBigNumberToEtherString(smartReview.deadline);
-        dataObj.issuers = smartReview.issuers;
-        dataObj.requirementsHash = smartReview.requirementsHash;
-        dataObj.ipHash = smartReview.ipHash;
-        WeiToEther = convertBigNumberToEtherString(smartReview.currentBalance);
-        WeiToEther = converWeiToEther(WeiToEther.toString());
-
-        dataObj.currentBalance = WeiToEther;
-        dataObj.title = smartReview.info[0];
-        dataObj.description = smartReview.info[1];
-        allData.push(dataObj);
+          dataObj.currentBalance = WeiToEther;
+          dataObj.title = smartReview.info[0];
+          dataObj.description = smartReview.info[1];
+          allData.push(dataObj);
+          setData(dataObj);
+        } catch (e) {
+          console.error(
+            `ERROR when fetching smart review id ${i}, SKIP!,\n the error is : ${e}`
+          );
+        }
       }
       console.log("allData: ", allData);
       setIsFetching(false);
