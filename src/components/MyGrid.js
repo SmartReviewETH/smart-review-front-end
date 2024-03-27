@@ -3,21 +3,22 @@ import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 import { Box } from "@mui/material";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-const rows = [
-  { id: 1, col1: "Hello", col2: "World" },
-  { id: 2, col1: "DataGridPro", col2: "is Awesome" },
-  { id: 3, col1: "MUI", col2: "is Amazing" },
-];
+
 
 export default function MyGrid({ data }) {
+  console.log(data);
   const handleDownloadClick = (id) => {
-    console.log(id);
+    const fileHash = data[id].reviewFileHash;
+    console.log(fileHash);
+    // download the file from ipfs
+    window.open(`https://${fileHash}.ipfs.dweb.link/`);
   };
   const handleOpenLink = (proposal_id) => {
     window.open(`https://www.tally.xyz/gov/test-78/proposal/${proposal_id}`);
   };
   const columns = [
-    { field: "col1", headerName: "IDs", width: 100 },
+    { field: "phase", headerName: "Status", width: 100 },
+    { field: "issuer", headerName: "Reviewer Address", width: 300 },
     {
       field: "actions",
       type: "actions",
@@ -58,7 +59,7 @@ export default function MyGrid({ data }) {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <DataGrid rows={rows} columns={columns} />
+      <DataGrid autoHeight rows={data} columns={columns} />
     </Box>
   );
 }

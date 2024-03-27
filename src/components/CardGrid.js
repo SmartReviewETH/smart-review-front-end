@@ -25,6 +25,7 @@ export function CardGrid({ data_array }) {
   );
 }
 export default function BasicCard({ data }) {
+  const current_time = moment().unix();
   const [open, setOpen] = React.useState(false);
   const [openReview, setOpenReview] = React.useState(false);
   return (
@@ -79,17 +80,30 @@ export default function BasicCard({ data }) {
             >
               Reviews
             </Button>
-            <Button size="small" color="secondary" variant="contained">
-              Download Files
-            </Button>
             <Button
               size="small"
-              color="success"
+              color="secondary"
+              variant="contained"
+              onClick={() => {
+                window.open(`https://${data.requirementsHash}.ipfs.dweb.link/`);
+                window.open(`https://${data.ipHash}.ipfs.dweb.link/`);
+              }}
+            >
+              Download Files
+            </Button>
+
+            <Button
+              size="small"
               variant="contained"
               onClick={() => setOpen(true)}
             >
               Contribute
             </Button>
+            {data.status === "ACTIVE" && data.deadline < current_time && (
+              <Button size="small" color="success" variant="contained">
+                Complete
+              </Button>
+            )}
           </CardActions>
         </Card>
       </Grid>
