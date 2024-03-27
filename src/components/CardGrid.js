@@ -5,9 +5,9 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { Grid } from '@mui/material';
-import {ContributeModal} from './ContributeModal';
-import moment from 'moment';
+import { Grid, Stack } from "@mui/material";
+import { ContributeModal } from "./ContributeModal";
+import moment from "moment";
 import { ReviewsModal } from "./ReviewsModal";
 export function CardGrid({ data_array }) {
   return (
@@ -72,38 +72,42 @@ export default function BasicCard({ data }) {
             </Typography>
           </CardContent>
           <CardActions>
-            <Button
-              size="small"
-              color="info"
-              variant="contained"
-              onClick={() => setOpenReview(true)}
-            >
-              Reviews
-            </Button>
-            <Button
-              size="small"
-              color="secondary"
-              variant="contained"
-              onClick={() => {
-                window.open(`https://${data.requirementsHash}.ipfs.dweb.link/`);
-                window.open(`https://${data.ipHash}.ipfs.dweb.link/`);
-              }}
-            >
-              Download Files
-            </Button>
-
-            <Button
-              size="small"
-              variant="contained"
-              onClick={() => setOpen(true)}
-            >
-              Contribute
-            </Button>
-            {data.status === "ACTIVE" && data.deadline < current_time && (
-              <Button size="small" color="success" variant="contained">
-                Complete
+            <Stack direction="row" spacing={2} useFlexGap flexWrap="wrap">
+              <Button
+                size="small"
+                color="info"
+                variant="contained"
+                onClick={() => setOpenReview(true)}
+              >
+                Reviews
               </Button>
-            )}
+              <Button
+                size="small"
+                color="secondary"
+                variant="contained"
+                onClick={() => {
+                  window.open(
+                    `https://${data.requirementsHash}.ipfs.dweb.link/`
+                  );
+                  window.open(`https://${data.ipHash}.ipfs.dweb.link/`);
+                }}
+              >
+                Download Files
+              </Button>
+
+              <Button
+                size="small"
+                variant="contained"
+                onClick={() => setOpen(true)}
+              >
+                Contribute
+              </Button>
+              {data.status === "ACTIVE" && data.deadline < current_time && (
+                <Button size="small" color="success" variant="contained">
+                  Complete
+                </Button>
+              )}
+            </Stack>
           </CardActions>
         </Card>
       </Grid>

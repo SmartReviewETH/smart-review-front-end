@@ -40,7 +40,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="profile" element={<ProfilePage />} />
             <Route path="smartReviewHub" element={<SmartReviewHubPage />} />
-            <Route path="reviewHub" element={<ReviewHubPage />} />
+            {/* <Route path="reviewHub" element={<ReviewHubPage />} /> */}
           </Routes>
         </ThemeProvider>
       </BrowserRouter>

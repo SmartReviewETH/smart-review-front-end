@@ -157,7 +157,14 @@ export function ReviewsModal({ open, onClose, title, id }) {
                 {title}
               </Typography>
               <MyGrid data={allReviews} />
-              <Stack direction="row" alignItems="center" spacing={1}>
+              <Stack
+                direction="row"
+                alignItems="center"
+                spacing={1}
+                flexWrap="wrap"
+                justifyContent={"center"}
+                useFlexGap
+              >
                 <FileUploader
                   handleChange={handleChangeIpFile}
                   name="ip file"

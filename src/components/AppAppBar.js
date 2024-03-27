@@ -90,7 +90,11 @@ function AppAppBar({ mode, toggleColorMode }) {
                   }}
                 >
                   <img
-                    src={theme.palette.mode ==="light"?require("../assets/logo_no_back.png"):require("../assets/logo_no_back_dark.png")}
+                    src={
+                      theme.palette.mode === "light"
+                        ? require("../assets/logo_no_back.png")
+                        : require("../assets/logo_no_back_dark.png")
+                    }
                     style={logoStyle}
                     alt="logo of smart review"
                   />
@@ -107,7 +111,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                     SmartReview Hub
                   </Typography>
                 </MenuItem>
-                <MenuItem
+                {/* <MenuItem
                   onClick={() => {
                     navigate("reviewHub");
                   }}
@@ -116,7 +120,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                   <Typography variant="body2" color="text.primary">
                     Review Hub
                   </Typography>
-                </MenuItem>
+                </MenuItem> */}
                 <MenuItem
                   onClick={() => {
                     navigate("profile");
