@@ -15,7 +15,7 @@ export default function AutohideSnackbar({ isopen, setOpen, msg, type }) {
   };
 
   return (
-    <Snackbar open={isopen} autoHideDuration={7000} onClose={handleClose}>
+    <Snackbar open={isopen} autoHideDuration={10000} onClose={handleClose}>
       <Alert
         onClose={handleClose}
         severity={type}

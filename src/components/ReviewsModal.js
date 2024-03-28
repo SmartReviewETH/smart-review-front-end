@@ -1,4 +1,12 @@
-import { Modal, Box, Typography, Stack, Button, Alert } from "@mui/material";
+import {
+  Modal,
+  Box,
+  Typography,
+  Stack,
+  Button,
+  Alert,
+  Link,
+} from "@mui/material";
 import React from "react";
 import { Modalstyle } from "./styles/styles";
 import CircularIndeterminate from "./LoadingCircle";
@@ -95,19 +103,28 @@ export function ReviewsModal({ open, onClose, title, id }) {
         .publishReview(cid, id, proposalId)
         .then((tx) => {
           //action prior to transaction being mined
-          ethprovider.waitForTransaction(tx.hash).then(async () => {
-            //action after transaction is mined
-            console.log("transaction hash", tx.hash);
-            // alert
-            setMsg(
-              `Review Submission Successfully! Review tx Hash: ${tx.hash} || Proposal tx Hash is: ${proposal_tx.hash}`
-            );
-            setOpenSnackBar(true);
-            setType("success");
-            //upload finished
-            setPending(false);
-            onClose();
-          });
+          //action after transaction is mined
+          console.log("transaction hash", tx.hash);
+          const reviewtxLink = `https://sepolia.etherscan.io/tx/${tx.hash}`;
+          const proposaltxLink = `https://sepolia.etherscan.io/tx/${proposal_tx.hash}`;
+          // alert
+          setMsg(
+            <div>
+              Review Submitted Successfully! View Review tx on EtherScan:{" "}
+              <Link href={reviewtxLink} target="_blank" rel="noreferrer">
+                Link
+              </Link>{" "}
+              || View Proposal tx on EtherScan:{" "}
+              <Link href={proposaltxLink} target="_blank" rel="noreferrer">
+                Link
+              </Link>
+            </div>
+          );
+          setOpenSnackBar(true);
+          setType("success");
+          //upload finished
+          setPending(false);
+          onClose();
         })
         .catch(() => {
           //action to perform when user clicks "reject"
@@ -120,25 +137,25 @@ export function ReviewsModal({ open, onClose, title, id }) {
         });
     }
   };
+  const fetch = async () => {
+    setPending(true);
+    if (contact && ethprovider) {
+      // fetch all the reviews for the smart review id
+      const reviews = await contact.getReviewsBySmartReviewId(id);
+      const allReviews = reviews.map((review, index) => {
+        return {
+          id: index,
+          phase: review.phase === 0 ? "Active" : "Accepted",
+          issuer: review.issuer,
+          reviewFileHash: review.reviewFileHash,
+          proposalId: review.proposal_id,
+        };
+      });
+      setAllReviews(allReviews);
+      setPending(false);
+    }
+  };
   React.useEffect(() => {
-    const fetch = async (e) => {
-      setPending(true);
-      if (contact && ethprovider) {
-        // fetch all the reviews for the smart review id
-        const reviews = await contact.getReviewsBySmartReviewId(id);
-        const allReviews = reviews.map((review, index) => {
-          return {
-            id: index,
-            phase: review.phase === 0 ? "Active" : "Accepted",
-            issuer: review.issuer,
-            reviewFileHash: review.reviewFileHash,
-            proposalId: review.proposal_id,
-          };
-        });
-        setAllReviews(allReviews);
-        setPending(false);
-      }
-    };
     fetch();
   }, [contact, ethprovider]);
 
@@ -212,9 +229,14 @@ export function ReviewsModal({ open, onClose, title, id }) {
                   Add Your Review
                 </Button>
               </Stack>
-              <Button variant="outlined" color="primary" onClick={onClose}>
-                Close
-              </Button>
+              <Stack direction="row" alignItems="center" spacing={2}>
+                <Button variant="contained" color="success" onClick={fetch}>
+                  Refresh List
+                </Button>
+                <Button variant="contained" color="primary" onClick={onClose}>
+                  Close
+                </Button>
+              </Stack>
             </Stack>
           )}
         </Box>

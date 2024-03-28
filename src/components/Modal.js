@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { Modalstyle } from "./styles/styles";
-import { Alert, FormControl, Stack, TextField } from "@mui/material";
+import { Alert, FormControl, Link, Stack, TextField } from "@mui/material";
 import { FileUploader } from "react-drag-drop-files";
 import moment from "moment";
 import { EtherContext } from "../App";
@@ -84,25 +84,32 @@ export default function InitiationModal() {
     // interact with the smart contract to initiate the smart review
     if (contact && ethprovider && ipCid && rqCid) {
       contact
-        .publishSmartReview([issuer], ipCid, rqCid, deadline_unix, bount_in_wei, [
-          title,
-          description,
-        ])
+        .publishSmartReview(
+          [issuer],
+          ipCid,
+          rqCid,
+          deadline_unix,
+          bount_in_wei,
+          [title, description]
+        )
         .then((tx) => {
           //action prior to transaction being mined
-          ethprovider.waitForTransaction(tx.hash).then(() => {
-            //action after transaction is mined
-            console.log("transaction hash", tx.hash);
-            // alert
-            setMsg(
-              `Smart Review Initiated Successfully! Transaction Hash: ${tx.hash}`
-            );
-            setOpenSnackBar(true);
-            setType("success");
-            //upload finished
-            setPending(false);
-            setOpen(false);
-          });
+          //action after transaction is mined
+          const txlink = `https://sepolia.etherscan.io/tx/${tx.hash}`;
+          // alert
+          setMsg(
+            <div>
+              Smart Review Initiated Successfully! View tx on EtherScan:{" "}
+              <Link href={txlink} target="_blank" rel="noreferrer">
+                Link
+              </Link>
+            </div>
+          );
+          setOpenSnackBar(true);
+          setType("success");
+          //upload finished
+          setPending(false);
+          setOpen(false);
         })
         .catch(() => {
           //action to perform when user clicks "reject"

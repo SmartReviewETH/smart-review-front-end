@@ -1,12 +1,20 @@
-import {  Modal, Button, Box, Typography, Stack, TextField } from '@mui/material';
-import React from 'react';
-import { Modalstyle } from './styles/styles';
-import CircularIndeterminate from './LoadingCircle';
-import { EtherContext } from '../App';
-import AutohideSnackbar from './MySnackBar';
-import { convertEthertoWei } from '../utils/helper';
+import {
+  Modal,
+  Button,
+  Box,
+  Typography,
+  Stack,
+  TextField,
+  Link,
+} from "@mui/material";
+import React from "react";
+import { Modalstyle } from "./styles/styles";
+import CircularIndeterminate from "./LoadingCircle";
+import { EtherContext } from "../App";
+import AutohideSnackbar from "./MySnackBar";
+import { convertEthertoWei } from "../utils/helper";
 
-export function ContributeModal({ open, onClose, title, id }){
+export function ContributeModal({ open, onClose, title, id }) {
   const { provider, walletAddress, SmartReviewContract, tokenContract } =
     React.useContext(EtherContext);
   const [pending, setPending] = React.useState(false);
@@ -31,8 +39,16 @@ export function ContributeModal({ open, onClose, title, id }){
         SmartReviewContract.address,
         convertEthertoWei("100").toString()
       );
-      console.log(tx);
-      setMsg(`Approved to spend SMT! Transaction Hash: ${tx.hash}`);
+      const txlink = `https://sepolia.etherscan.io/tx/${tx.hash}`;
+      // alert
+      setMsg(
+        <div>
+          Approve Successfully! View tx on EtherScan:{" "}
+          <Link href={txlink} target="_blank" rel="noreferrer">
+            Link
+          </Link>
+        </div>
+      );
       setOpenSnackBar(true);
       setType("success");
       setPending(false);
@@ -58,19 +74,25 @@ export function ContributeModal({ open, onClose, title, id }){
         .addBountyToSmartReview(id, EtherToWei)
         .then((tx) => {
           //action prior to transaction being mined
-          ethprovider.waitForTransaction(tx.hash).then(() => {
-            //action after transaction is mined
-            console.log("transaction hash", tx.hash);
-            // alert
-            setType("success");
-            setMsg(
-              `Contribution made Successfully! Please refresh to see the update value. Transaction Hash: ${tx.hash}`
-            );
-            setOpenSnackBar(true);
-            //tx finished
-            setPending(false);
-            onClose();
-          });
+          //action after transaction is mined
+          console.log("transaction hash", tx.hash);
+          // alert
+          setType("success");
+          const txlink = `https://sepolia.etherscan.io/tx/${tx.hash}`;
+          // alert
+          setMsg(
+            <div>
+              Contribution made Successfully! View tx on EtherScan:{" "}
+              <Link href={txlink} target="_blank" rel="noreferrer">
+                Link
+              </Link>
+            </div>
+          );
+
+          setOpenSnackBar(true);
+          //tx finished
+          setPending(false);
+          onClose();
         })
         .catch((e) => {
           //action to perform when user clicks "reject"
@@ -178,5 +200,4 @@ export function ContributeModal({ open, onClose, title, id }){
       </Modal>
     </>
   );
-};
-
+}
