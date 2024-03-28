@@ -1,12 +1,15 @@
 import React from "react";
 import { ethers } from "ethers";
 import { smartReviewContractAbi } from "../Abi/SmartReviewContractAbi";
+import { GovernorContractAbi } from "../Abi/GovernorContractAbi";
 
 export function useEther() {
   const [provider, setProvider] = React.useState(null);
   const [network, setNetwork] = React.useState("");
   const [address, setAddress] = React.useState("");
   const [smartReviewContract, setSmartReviewContract] = React.useState(null);
+  const [governorContract, setGovernorContract] = React.useState(null);
+
   React.useEffect(() => {
     const initializeProvider = async () => {
       if (window.ethereum) {
@@ -36,20 +39,33 @@ export function useEther() {
       if (!provider) return;
       const signer = provider.getSigner();
       const contract = new ethers.Contract(
-        "0xDCb2C1F4f07798a9f1e611d0db9091424a81C4F4",
+        "0x27BC0FB034EF2bE828Ed5f5dE0cfCeeC497d2996",
         smartReviewContractAbi,
         signer
       );
       console.log(contract);
-      setSmartReviewContract(contract);
 
-      
+      setSmartReviewContract(contract);
+    }
+    async function getGovernanceContract() {
+      if (!provider) return;
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(
+        "0x8939843484975DD23b30951FEac7317335969ec3",
+        GovernorContractAbi,
+        signer
+      );
+
+      console.log(contract);
+
+      setGovernorContract(contract);
     }
 
     getAddress();
     getNetwork();
     getContract();
+    getGovernanceContract();
   }, [provider]);
 
-  return { provider, network, address, smartReviewContract };
+  return { provider, network, address, smartReviewContract, governorContract };
 }

@@ -6,14 +6,13 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
 
 export default function MyGrid({ data }) {
-  console.log(data);
   const handleDownloadClick = (id) => {
     const fileHash = data[id].reviewFileHash;
-    console.log(fileHash);
     // download the file from ipfs
     window.open(`https://${fileHash}.ipfs.dweb.link/`);
   };
-  const handleOpenLink = (proposal_id) => {
+  const handleOpenLink = (id) => {
+    const proposal_id = data[id].proposalId;
     window.open(`https://www.tally.xyz/gov/test-78/proposal/${proposal_id}`);
   };
   const columns = [

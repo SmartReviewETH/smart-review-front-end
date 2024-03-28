@@ -7,9 +7,11 @@ import AutohideSnackbar from "./MySnackBar";
 import MyGrid from "./MyGrid";
 import { FileUploader } from "react-drag-drop-files";
 import { Ipfsuploader } from "../utils/helper";
+import { ethers, utils } from "ethers";
 
 export function ReviewsModal({ open, onClose, title, id }) {
-  const { provider, SmartReviewContract } = React.useContext(EtherContext);
+  const { provider, SmartReviewContract, governorContract } =
+    React.useContext(EtherContext);
   const [pending, setPending] = React.useState(false);
   const [openSnackBar, setOpenSnackBar] = React.useState(false);
   const [msg, setMsg] = React.useState("");
@@ -20,7 +22,16 @@ export function ReviewsModal({ open, onClose, title, id }) {
   };
   const [allReviews, setAllReviews] = React.useState([]);
   const [submitFailed, setSubmitFailed] = React.useState(false);
-
+  //web3 states
+  const [contact, setContract] = React.useState();
+  const [ethprovider, setEthProvider] = React.useState();
+  const [govContract, setGovernorContract] = React.useState();
+  //useeffect
+  React.useEffect(() => {
+    setContract(SmartReviewContract);
+    setEthProvider(provider);
+    setGovernorContract(governorContract);
+  }, [SmartReviewContract, provider, governorContract]);
   const handleSubmit = async () => {
     if (file === null) {
       // must upload both files
@@ -46,17 +57,49 @@ export function ReviewsModal({ open, onClose, title, id }) {
     // initiate a dao proposal
     console.log("cid", cid);
     // interact with the smart contract to initiate the smart review
-    if (contact && ethprovider && cid) {
+    if (govContract && contact && ethprovider && cid && allReviews) {
+      const encodedFn = contact.interface.encodeFunctionData("completeReview", [
+        allReviews.length,
+        id,
+      ]);
+      console.log("encoded function", encodedFn);
+      const proposal_id = await govContract.hashProposal(
+        ["0xFb3901F9Fc06045f9cE03EeEB21485559A858784"],
+        [0],
+        [encodedFn],
+        utils.keccak256(
+          utils.toUtf8Bytes("Review Proposal for Smart Review ID " + id)
+        )
+      );
+      const proposalId = proposal_id.toString();
+      // initiate a dao proposal
+      let proposal_tx;
+      try {
+        proposal_tx = await govContract.propose(
+          ["0xFb3901F9Fc06045f9cE03EeEB21485559A858784"],
+          [0],
+          [encodedFn],
+          "Review Proposal for Smart Review ID " + id
+        );
+      } catch (e) {
+        console.log("error", e);
+        setMsg(`Review Submission Failure! Error in opening a Dao proposal!`);
+        setOpenSnackBar(true);
+        setType("error");
+        onClose();
+        setPending(false);
+        return;
+      }
       contact
-        .publishReview(cid, id)
+        .publishReview(cid, id, proposalId)
         .then((tx) => {
           //action prior to transaction being mined
-          ethprovider.waitForTransaction(tx.hash).then(() => {
+          ethprovider.waitForTransaction(tx.hash).then(async () => {
             //action after transaction is mined
             console.log("transaction hash", tx.hash);
             // alert
             setMsg(
-              `Review Submission Successfully! Transaction Hash: ${tx.hash}`
+              `Review Submission Successfully! \nReview tx Hash: ${tx.hash}.\nProposal tx Hash is: ${proposal_tx.hash}`
             );
             setOpenSnackBar(true);
             setType("success");
@@ -76,15 +119,6 @@ export function ReviewsModal({ open, onClose, title, id }) {
         });
     }
   };
-  //web3 states
-  const [contact, setContract] = React.useState();
-  const [ethprovider, setEthProvider] = React.useState();
-  //useeffect
-  React.useEffect(() => {
-    setContract(SmartReviewContract);
-    setEthProvider(provider);
-  }, [SmartReviewContract, provider]);
-
   React.useEffect(() => {
     const fetch = async (e) => {
       setPending(true);
@@ -97,7 +131,7 @@ export function ReviewsModal({ open, onClose, title, id }) {
             phase: review.phase === 0 ? "Active" : "Accepted",
             issuer: review.issuer,
             reviewFileHash: review.reviewFileHash,
-            votingLink: review.votingLink,
+            proposalId: review.proposal_id,
           };
         });
         setAllReviews(allReviews);
