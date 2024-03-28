@@ -5,10 +5,12 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { Grid, Stack } from "@mui/material";
+import { Grid, Link, Stack } from "@mui/material";
 import { ContributeModal } from "./ContributeModal";
 import moment from "moment";
 import { ReviewsModal } from "./ReviewsModal";
+import AutohideSnackbar from "./MySnackBar";
+import { EtherContext } from "../App";
 export function CardGrid({ data_array }) {
   return (
     <Grid
@@ -25,11 +27,44 @@ export function CardGrid({ data_array }) {
   );
 }
 export default function BasicCard({ data }) {
+  const { provider, SmartReviewContract } = React.useContext(EtherContext);
+
   const current_time = moment().unix();
   const [open, setOpen] = React.useState(false);
   const [openReview, setOpenReview] = React.useState(false);
+  const [msg, setMsg] = React.useState();
+  const [type, setType] = React.useState("success"); //["success", "error"
+  const [openSnackBar, setOpenSnackBar] = React.useState(false);
+  const handleComplete = async () => {
+    try {
+      const tx = await SmartReviewContract.completeSmartReview(data.id);
+      const txlink = `https://sepolia.etherscan.io/tx/${tx.hash}`;
+      // alert
+      setMsg(
+        <div>
+          Smart Review Completed Successfully! View tx on EtherScan:{" "}
+          <Link href={txlink} target="_blank" rel="noreferrer">
+            Link
+          </Link>
+        </div>
+      );
+      setType("success");
+      setOpenSnackBar(true);
+    } catch (e) {
+      console.log(e);
+      setOpenSnackBar(true);
+      setMsg(`Smart Review Completion Failure!`);
+      setType("error");
+    }
+  };
   return (
     <>
+      <AutohideSnackbar
+        isopen={openSnackBar}
+        msg={msg}
+        type={type}
+        setOpen={setOpenSnackBar}
+      />
       <ContributeModal
         key={"modal" + data.id}
         open={open}
@@ -96,16 +131,22 @@ export default function BasicCard({ data }) {
               >
                 Download Files
               </Button>
-
-              <Button
-                size="small"
-                variant="contained"
-                onClick={() => setOpen(true)}
-              >
-                Contribute
-              </Button>
+              {data.status !== "COMPLETE" && (
+                <Button
+                  size="small"
+                  variant="contained"
+                  onClick={() => setOpen(true)}
+                >
+                  Contribute
+                </Button>
+              )}
               {data.status === "ACTIVE" && data.deadline < current_time && (
-                <Button size="small" color="success" variant="contained">
+                <Button
+                  size="small"
+                  color="success"
+                  variant="contained"
+                  onClick={handleComplete}
+                >
                   Complete
                 </Button>
               )}

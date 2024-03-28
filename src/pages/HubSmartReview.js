@@ -15,7 +15,7 @@ export default function SmartReviewHubPage() {
     0: "ACTIVE",
     1: "Fund Raising",
     2: "EXPIRED",
-    3: "PAID",
+    3: "COMPLETE",
   };
   const [isFetching, setIsFetching] = React.useState(true);
   const [data, setData] = React.useState(); // data from the contract
