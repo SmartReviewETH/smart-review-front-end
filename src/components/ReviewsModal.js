@@ -64,7 +64,7 @@ export function ReviewsModal({ open, onClose, title, id }) {
         id,
       ]);
       const proposal_id = await govContract.hashProposal(
-        ["0x27BC0FB034EF2bE828Ed5f5dE0cfCeeC497d2996"],
+        [contact.address],
         [0],
         [encodedFn],
         utils.keccak256(
@@ -72,11 +72,11 @@ export function ReviewsModal({ open, onClose, title, id }) {
         )
       );
       const proposalId = proposal_id.toString();
-      // initiate a dao proposal
+      // initiate a dao proposal first
       let proposal_tx;
       try {
         proposal_tx = await govContract.propose(
-          ["0x27BC0FB034EF2bE828Ed5f5dE0cfCeeC497d2996"],
+          [contact.address],
           [0],
           [encodedFn],
           "Review Proposal for Smart Review ID " + id
@@ -100,7 +100,7 @@ export function ReviewsModal({ open, onClose, title, id }) {
             console.log("transaction hash", tx.hash);
             // alert
             setMsg(
-              `Review Submission Successfully! \nReview tx Hash: ${tx.hash}.\nProposal tx Hash is: ${proposal_tx.hash}`
+              `Review Submission Successfully! Review tx Hash: ${tx.hash} || Proposal tx Hash is: ${proposal_tx.hash}`
             );
             setOpenSnackBar(true);
             setType("success");
