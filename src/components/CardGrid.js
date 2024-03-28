@@ -73,14 +73,16 @@ export default function BasicCard({ data }) {
           </CardContent>
           <CardActions>
             <Stack direction="row" spacing={2} useFlexGap flexWrap="wrap">
-              <Button
-                size="small"
-                color="info"
-                variant="contained"
-                onClick={() => setOpenReview(true)}
-              >
-                Reviews
-              </Button>
+              {data.status === "ACTIVE" && (
+                <Button
+                  size="small"
+                  color="info"
+                  variant="contained"
+                  onClick={() => setOpenReview(true)}
+                >
+                  Reviews
+                </Button>
+              )}
               <Button
                 size="small"
                 color="secondary"

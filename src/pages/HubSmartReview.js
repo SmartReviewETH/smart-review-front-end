@@ -11,7 +11,12 @@ export function convertBigNumberToEtherString(bigNumber) {
 }
 export default function SmartReviewHubPage() {
   const { provider,SmartReviewContract } = React.useContext(EtherContext);
-  const phaseMapping = {0:"ACTIVE", 1:"PAUSED", 2:"EXPIRED", 3:"PAID"}
+  const phaseMapping = {
+    0: "ACTIVE",
+    1: "Fund Raising",
+    2: "EXPIRED",
+    3: "PAID",
+  };
   const [isFetching, setIsFetching] = React.useState(true);
   const [data, setData] = React.useState(); // data from the contract
   React.useEffect(() => {
