@@ -58,13 +58,13 @@ export function ReviewsModal({ open, onClose, title, id }) {
     console.log("cid", cid);
     // interact with the smart contract to initiate the smart review
     if (govContract && contact && ethprovider && cid && allReviews) {
+      //open proposal on tally
       const encodedFn = contact.interface.encodeFunctionData("completeReview", [
         allReviews.length,
         id,
       ]);
-      console.log("encoded function", encodedFn);
       const proposal_id = await govContract.hashProposal(
-        ["0xFb3901F9Fc06045f9cE03EeEB21485559A858784"],
+        ["0x27BC0FB034EF2bE828Ed5f5dE0cfCeeC497d2996"],
         [0],
         [encodedFn],
         utils.keccak256(
@@ -76,7 +76,7 @@ export function ReviewsModal({ open, onClose, title, id }) {
       let proposal_tx;
       try {
         proposal_tx = await govContract.propose(
-          ["0xFb3901F9Fc06045f9cE03EeEB21485559A858784"],
+          ["0x27BC0FB034EF2bE828Ed5f5dE0cfCeeC497d2996"],
           [0],
           [encodedFn],
           "Review Proposal for Smart Review ID " + id
@@ -90,6 +90,7 @@ export function ReviewsModal({ open, onClose, title, id }) {
         setPending(false);
         return;
       }
+      //publish revew
       contact
         .publishReview(cid, id, proposalId)
         .then((tx) => {
