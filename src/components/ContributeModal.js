@@ -32,9 +32,9 @@ export function ContributeModal({ open, onClose, title, id }){
         convertEthertoWei("100").toString()
       );
       console.log(tx);
-      setMsg(`Approved to spend! Transaction Hash: ${tx.hash}`);
+      setMsg(`Approved to spend SMT! Transaction Hash: ${tx.hash}`);
       setOpenSnackBar(true);
-      setType("error");
+      setType("success");
       setPending(false);
     } catch (e) {
       console.log(e);
@@ -62,11 +62,11 @@ export function ContributeModal({ open, onClose, title, id }){
             //action after transaction is mined
             console.log("transaction hash", tx.hash);
             // alert
+            setType("success");
             setMsg(
               `Contribution made Successfully! Please refresh to see the update value. Transaction Hash: ${tx.hash}`
             );
             setOpenSnackBar(true);
-            setType("success");
             //tx finished
             setPending(false);
             onClose();
