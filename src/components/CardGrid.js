@@ -78,6 +78,7 @@ export default function BasicCard({ data }) {
         onClose={() => setOpenReview(false)}
         title={data.title}
         id={data.id}
+        status={data.status}
       />
 
       <Grid key={data.id} minWidth={380} item xs={12} sm={4} md={4} padding={1}>
@@ -108,7 +109,7 @@ export default function BasicCard({ data }) {
           </CardContent>
           <CardActions>
             <Stack direction="row" spacing={2} useFlexGap flexWrap="wrap">
-              {data.status === "ACTIVE" && (
+              {(data.status === "ACTIVE" || data.status === "COMPLETE") && (
                 <Button
                   size="small"
                   color="info"

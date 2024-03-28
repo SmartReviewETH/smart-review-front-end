@@ -17,7 +17,7 @@ import { FileUploader } from "react-drag-drop-files";
 import { Ipfsuploader } from "../utils/helper";
 import { ethers, utils } from "ethers";
 
-export function ReviewsModal({ open, onClose, title, id }) {
+export function ReviewsModal({ open, onClose, title, id, status }) {
   const { provider, SmartReviewContract, governorContract } =
     React.useContext(EtherContext);
   const [pending, setPending] = React.useState(false);
@@ -193,7 +193,9 @@ export function ReviewsModal({ open, onClose, title, id }) {
                 variant="h5"
                 textAlign="center"
               >
-                All the reviews for
+                {status !== "COMPLETE"
+                  ? "All Reviews for"
+                  : "Archived Reviews for"}
               </Typography>
 
               <Typography
@@ -209,26 +211,28 @@ export function ReviewsModal({ open, onClose, title, id }) {
                 {title}
               </Typography>
               <MyGrid data={allReviews} />
-              <Stack
-                direction="row"
-                alignItems="center"
-                spacing={1}
-                flexWrap="wrap"
-                justifyContent={"center"}
-                useFlexGap
-              >
-                <FileUploader
-                  handleChange={handleChangeIpFile}
-                  name="ip file"
-                />
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSubmit}
+              {status !== "COMPLETE" && (
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  spacing={1}
+                  flexWrap="wrap"
+                  justifyContent={"center"}
+                  useFlexGap
                 >
-                  Add Your Review
-                </Button>
-              </Stack>
+                  <FileUploader
+                    handleChange={handleChangeIpFile}
+                    name="ip file"
+                  />
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleSubmit}
+                  >
+                    Add Your Review
+                  </Button>
+                </Stack>
+              )}
               <Stack direction="row" alignItems="center" spacing={2}>
                 <Button variant="contained" color="success" onClick={fetch}>
                   Refresh List
