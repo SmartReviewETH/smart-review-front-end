@@ -7,7 +7,7 @@ import AutohideSnackbar from './MySnackBar';
 import { convertEthertoWei } from '../utils/helper';
 
 export function ContributeModal({ open, onClose, title, id }){
-  const { provider, walletAddress, SmartReviewContract } =
+  const { provider, walletAddress, SmartReviewContract, tokenContract } =
     React.useContext(EtherContext);
   const [pending, setPending] = React.useState(false);
   const [weiamount, setAmount] = React.useState("1");
@@ -25,15 +25,37 @@ export function ContributeModal({ open, onClose, title, id }){
     setContract(SmartReviewContract);
     setEthProvider(provider);
   }, [walletAddress, SmartReviewContract, provider]);
+  const handleApprove = async () => {
+    try {
+      const tx = await tokenContract.approve(
+        SmartReviewContract.address,
+        convertEthertoWei("100").toString()
+      );
+      console.log(tx);
+      setMsg(`Approved to spend! Transaction Hash: ${tx.hash}`);
+      setOpenSnackBar(true);
+      setType("error");
+      setPending(false);
+    } catch (e) {
+      console.log(e);
+      setMsg(`approval Failure! User Rejected!`);
+      setOpenSnackBar(true);
+      setType("error");
+      setPending(false);
+      return;
+    }
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const EtherToWei = convertEthertoWei(weiamount);
-    console.log(EtherToWei.toString());
+    const EtherToWei = convertEthertoWei(weiamount).toString();
+    console.log(EtherToWei);
     // transfer smt tokens to the contract
     setPending(true);
+    if (tokenContract) {
+    }
     if (contact && ethprovider) {
       contact
-        .addBountyToSmartReview(id, EtherToWei.toString())
+        .addBountyToSmartReview(id, EtherToWei)
         .then((tx) => {
           //action prior to transaction being mined
           ethprovider.waitForTransaction(tx.hash).then(() => {
@@ -103,6 +125,19 @@ export function ContributeModal({ open, onClose, title, id }){
               >
                 {title}
               </Typography>
+              <Stack direction="column" alignItems="center" spacing={1}>
+                <Typography variant="subtitle2" textAlign="center">
+                  Approve first to transfer SMT for contribution*
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleApprove}
+                >
+                  Approve
+                </Button>
+              </Stack>
+
               <Stack direction="column" alignItems="center" spacing={1}>
                 <Typography variant="subtitle2" textAlign="center">
                   Type in the number of SMT tokens for Contribution (min of 1)*

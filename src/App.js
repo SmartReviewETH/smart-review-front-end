@@ -14,8 +14,14 @@ import { useEther } from "./customHooks/UseEther";
 export const EtherContext = React.createContext(null);
 
 export default function App() {
-  const { provider, network, address, smartReviewContract, governorContract } =
-    useEther();
+  const {
+    provider,
+    network,
+    address,
+    smartReviewContract,
+    governorContract,
+    tokenContract,
+  } = useEther();
   const [mode, setMode] = React.useState("light");
   const [showCustomTheme, setShowCustomTheme] = React.useState(true);
   const LPtheme = createTheme(getLPTheme(mode));
@@ -32,6 +38,7 @@ export default function App() {
         walletAddress: address,
         SmartReviewContract: smartReviewContract,
         governorContract: governorContract,
+        tokenContract: tokenContract,
       }}
     >
       <BrowserRouter>
