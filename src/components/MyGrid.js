@@ -39,7 +39,7 @@ export default function MyGrid({ data }) {
     {
       field: "votingLink",
       type: "actions",
-      headerName: "Start Voting",
+      headerName: "Voting Proposal Link",
       width: 150,
       cellClassName: "actions",
       getActions: ({ id }) => {
