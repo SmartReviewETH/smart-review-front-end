@@ -34,7 +34,11 @@ export default function Profile() {
         setDelegationMsg("You have not delegated your voting power");
       } else {
         setDelegation(true);
-        setDelegationMsg("You have " + vp + " SMT delegated to yourself");
+        setDelegationMsg(
+          "You have " +
+            vp +
+            " SMT(need more than 0SMT to vote and review) delegated to yourself "
+        );
       }
     }
     fetchData();
@@ -42,6 +46,13 @@ export default function Profile() {
   const handleAddDelegation = async () => {
     try {
       const tx = await tokenContract.delegate(walletAddress);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+  const getSMT = async () => {
+    try {
+      // const tx = await tokenContract.transferFrom(walletAddress);
     } catch (e) {
       console.error(e);
     }
@@ -133,8 +144,9 @@ export default function Profile() {
             <Typography id="modal-modal-title" variant="h6" textAlign="center">
               {delegationmsg}
             </Typography>
-            {!delegation && (
-              <Stack sx={{ mt: 2, alignItems: "center" }}>
+
+            <Stack sx={{ mt: 2, alignItems: "center" }}>
+              {!delegation && (
                 <Button
                   variant="contained"
                   color="primary"
@@ -142,8 +154,11 @@ export default function Profile() {
                 >
                   Delegate yourself
                 </Button>
-              </Stack>
-            )}
+              )}
+              {/* <Button variant="contained" color="primary" onClick={getSMT}>
+                Get SMT
+              </Button> */}
+            </Stack>
           </CardContent>
         </Card>
       </Stack>
