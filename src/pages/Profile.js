@@ -88,7 +88,7 @@ export default function Profile() {
   }, [SmartReviewContract]);
 
   return (
-    <Box>
+    <Box mb={2}>
       <PageHeader
         title_front={"Your"}
         title_back={"Profile"}

@@ -90,7 +90,7 @@ function ScrollableRowOfCards({ title, proposals }) {
 
   return (
     <div>
-    <Typography variant="h4" component="h2" sx={{ ml: 10, mt: 10, fontWeight: 'bold', fontSize: '30px' }}>
+    <Typography variant="h4" component="h2" sx={{ ml: 10, mt: 10, mb: 2, fontWeight: 'bold', fontSize: '30px' }}>
         {title}
     </Typography>
 
