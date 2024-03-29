@@ -40,7 +40,51 @@ export function ReviewsModal({ open, onClose, title, id, status }) {
     setEthProvider(provider);
     setGovernorContract(governorContract);
   }, [SmartReviewContract, provider, governorContract]);
+  const fetch = async () => {
+    const ProposalState = [
+      "Pending",
+      "Active",
+      "Canceled",
+      "Defeated",
+      "Succeeded",
+      "Queued",
+      "Expired",
+      "Executed",
+      "Not Found",
+    ];
+    setPending(true);
+    if (contact && ethprovider && govContract) {
+      // fetch all the reviews for the smart review id
+      const reviews = await contact.getReviewsBySmartReviewId(id);
+      const allReviews = [];
+      for (let index = 0; index < reviews.length; index++) {
+        let state = 8;
+        try {
+          state = await govContract.state(reviews[index].proposal_id);
+          console.log(state);
+        } catch (e) {
+          console.log("ignore this error", e);
+        }
+
+        allReviews.push({
+          id: index,
+          phase: reviews[index].phase === 0 ? "Active" : "Accepted",
+          issuer: reviews[index].issuer,
+          reviewFileHash: reviews[index].reviewFileHash,
+          proposalId: reviews[index].proposal_id,
+          state: ProposalState[state],
+        });
+      }
+      setAllReviews(allReviews);
+      setPending(false);
+    }
+  };
+  React.useEffect(() => {
+    fetch();
+  }, [contact, ethprovider, govContract]);
   const handleSubmit = async () => {
+    const reviews = await govContract.getReviewsBySmartReviewId(id);
+
     if (file === null) {
       // must upload both files
       setSubmitFailed(true);
@@ -137,27 +181,7 @@ export function ReviewsModal({ open, onClose, title, id, status }) {
         });
     }
   };
-  const fetch = async () => {
-    setPending(true);
-    if (contact && ethprovider) {
-      // fetch all the reviews for the smart review id
-      const reviews = await contact.getReviewsBySmartReviewId(id);
-      const allReviews = reviews.map((review, index) => {
-        return {
-          id: index,
-          phase: review.phase === 0 ? "Active" : "Accepted",
-          issuer: review.issuer,
-          reviewFileHash: review.reviewFileHash,
-          proposalId: review.proposal_id,
-        };
-      });
-      setAllReviews(allReviews);
-      setPending(false);
-    }
-  };
-  React.useEffect(() => {
-    fetch();
-  }, [contact, ethprovider]);
+
 
   return (
     <>
