@@ -16,10 +16,16 @@ import MyGrid from "./MyGrid";
 import { FileUploader } from "react-drag-drop-files";
 import { Ipfsuploader } from "../utils/helper";
 import { ethers, utils } from "ethers";
+import moment from "moment";
 
 export function ReviewsModal({ open, onClose, title, id, status }) {
-  const { provider, SmartReviewContract, governorContract } =
-    React.useContext(EtherContext);
+  const {
+    walletAddress,
+    provider,
+    SmartReviewContract,
+    governorContract,
+    tokenContract,
+  } = React.useContext(EtherContext);
   const [pending, setPending] = React.useState(false);
   const [openSnackBar, setOpenSnackBar] = React.useState(false);
   const [msg, setMsg] = React.useState("");
@@ -61,9 +67,8 @@ export function ReviewsModal({ open, onClose, title, id, status }) {
         let state = 8;
         try {
           state = await govContract.state(reviews[index].proposal_id);
-          console.log(state);
         } catch (e) {
-          console.log("ignore this error", e);
+          // console.log("ignore this error", e);
         }
 
         allReviews.push({
@@ -82,9 +87,8 @@ export function ReviewsModal({ open, onClose, title, id, status }) {
   React.useEffect(() => {
     fetch();
   }, [contact, ethprovider, govContract]);
+  const handleDelegation = async () => {};
   const handleSubmit = async () => {
-    const reviews = await govContract.getReviewsBySmartReviewId(id);
-
     if (file === null) {
       // must upload both files
       setSubmitFailed(true);
@@ -182,7 +186,6 @@ export function ReviewsModal({ open, onClose, title, id, status }) {
     }
   };
 
-
   return (
     <>
       <AutohideSnackbar
@@ -234,12 +237,13 @@ export function ReviewsModal({ open, onClose, title, id, status }) {
               >
                 {title}
               </Typography>
+
               <MyGrid data={allReviews} />
               {status !== "COMPLETE" && (
                 <Stack
                   direction="row"
                   alignItems="center"
-                  spacing={1}
+                  spacing={2}
                   flexWrap="wrap"
                   justifyContent={"center"}
                   useFlexGap
@@ -248,9 +252,10 @@ export function ReviewsModal({ open, onClose, title, id, status }) {
                     handleChange={handleChangeIpFile}
                     name="ip file"
                   />
+
                   <Button
                     variant="contained"
-                    color="primary"
+                    color="secondary"
                     onClick={handleSubmit}
                   >
                     Add Your Review
