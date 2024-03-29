@@ -37,7 +37,7 @@ export default function Profile() {
         setDelegationMsg(
           "You have " +
             vp +
-            " SMT(need more than 0SMT to vote and review) delegated to yourself "
+            " SMT(need at least 1 SMT to vote and review) delegated to yourself "
         );
       }
     }
