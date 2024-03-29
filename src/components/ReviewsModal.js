@@ -1,4 +1,12 @@
-import { Modal, Box, Typography, Stack, Button, Alert } from "@mui/material";
+import {
+  Modal,
+  Box,
+  Typography,
+  Stack,
+  Button,
+  Alert,
+  Link,
+} from "@mui/material";
 import React from "react";
 import { Modalstyle } from "./styles/styles";
 import CircularIndeterminate from "./LoadingCircle";
@@ -7,9 +15,11 @@ import AutohideSnackbar from "./MySnackBar";
 import MyGrid from "./MyGrid";
 import { FileUploader } from "react-drag-drop-files";
 import { Ipfsuploader } from "../utils/helper";
+import { ethers, utils } from "ethers";
 
-export function ReviewsModal({ open, onClose, title, id }) {
-  const { provider, SmartReviewContract } = React.useContext(EtherContext);
+export function ReviewsModal({ open, onClose, title, id, status }) {
+  const { provider, SmartReviewContract, governorContract } =
+    React.useContext(EtherContext);
   const [pending, setPending] = React.useState(false);
   const [openSnackBar, setOpenSnackBar] = React.useState(false);
   const [msg, setMsg] = React.useState("");
@@ -20,7 +30,16 @@ export function ReviewsModal({ open, onClose, title, id }) {
   };
   const [allReviews, setAllReviews] = React.useState([]);
   const [submitFailed, setSubmitFailed] = React.useState(false);
-
+  //web3 states
+  const [contact, setContract] = React.useState();
+  const [ethprovider, setEthProvider] = React.useState();
+  const [govContract, setGovernorContract] = React.useState();
+  //useeffect
+  React.useEffect(() => {
+    setContract(SmartReviewContract);
+    setEthProvider(provider);
+    setGovernorContract(governorContract);
+  }, [SmartReviewContract, provider, governorContract]);
   const handleSubmit = async () => {
     if (file === null) {
       // must upload both files
@@ -46,24 +65,66 @@ export function ReviewsModal({ open, onClose, title, id }) {
     // initiate a dao proposal
     console.log("cid", cid);
     // interact with the smart contract to initiate the smart review
-    if (contact && ethprovider && cid) {
+    if (govContract && contact && ethprovider && cid && allReviews) {
+      //open proposal on tally
+      const encodedFn = contact.interface.encodeFunctionData("completeReview", [
+        allReviews.length,
+        id,
+      ]);
+      const proposal_id = await govContract.hashProposal(
+        [contact.address],
+        [0],
+        [encodedFn],
+        utils.keccak256(
+          utils.toUtf8Bytes("Review Proposal for Smart Review ID " + id)
+        )
+      );
+      const proposalId = proposal_id.toString();
+      // initiate a dao proposal first
+      let proposal_tx;
+      try {
+        proposal_tx = await govContract.propose(
+          [contact.address],
+          [0],
+          [encodedFn],
+          "Review Proposal for Smart Review ID " + id
+        );
+      } catch (e) {
+        console.log("error", e);
+        setMsg(`Review Submission Failure! Error in opening a Dao proposal!`);
+        setOpenSnackBar(true);
+        setType("error");
+        onClose();
+        setPending(false);
+        return;
+      }
+      //publish revew
       contact
-        .publishReview(cid, id)
+        .publishReview(cid, id, proposalId)
         .then((tx) => {
           //action prior to transaction being mined
-          ethprovider.waitForTransaction(tx.hash).then(() => {
-            //action after transaction is mined
-            console.log("transaction hash", tx.hash);
-            // alert
-            setMsg(
-              `Review Submission Successfully! Transaction Hash: ${tx.hash}`
-            );
-            setOpenSnackBar(true);
-            setType("success");
-            //upload finished
-            setPending(false);
-            onClose();
-          });
+          //action after transaction is mined
+          console.log("transaction hash", tx.hash);
+          const reviewtxLink = `https://sepolia.etherscan.io/tx/${tx.hash}`;
+          const proposaltxLink = `https://sepolia.etherscan.io/tx/${proposal_tx.hash}`;
+          // alert
+          setMsg(
+            <div>
+              Review Submitted Successfully! View Review tx on EtherScan:{" "}
+              <Link href={reviewtxLink} target="_blank" rel="noreferrer">
+                Link
+              </Link>{" "}
+              || View Proposal tx on EtherScan:{" "}
+              <Link href={proposaltxLink} target="_blank" rel="noreferrer">
+                Link
+              </Link>
+            </div>
+          );
+          setOpenSnackBar(true);
+          setType("success");
+          //upload finished
+          setPending(false);
+          onClose();
         })
         .catch(() => {
           //action to perform when user clicks "reject"
@@ -76,34 +137,25 @@ export function ReviewsModal({ open, onClose, title, id }) {
         });
     }
   };
-  //web3 states
-  const [contact, setContract] = React.useState();
-  const [ethprovider, setEthProvider] = React.useState();
-  //useeffect
+  const fetch = async () => {
+    setPending(true);
+    if (contact && ethprovider) {
+      // fetch all the reviews for the smart review id
+      const reviews = await contact.getReviewsBySmartReviewId(id);
+      const allReviews = reviews.map((review, index) => {
+        return {
+          id: index,
+          phase: review.phase === 0 ? "Active" : "Accepted",
+          issuer: review.issuer,
+          reviewFileHash: review.reviewFileHash,
+          proposalId: review.proposal_id,
+        };
+      });
+      setAllReviews(allReviews);
+      setPending(false);
+    }
+  };
   React.useEffect(() => {
-    setContract(SmartReviewContract);
-    setEthProvider(provider);
-  }, [SmartReviewContract, provider]);
-
-  React.useEffect(() => {
-    const fetch = async (e) => {
-      setPending(true);
-      if (contact && ethprovider) {
-        // fetch all the reviews for the smart review id
-        const reviews = await contact.getReviewsBySmartReviewId(id);
-        const allReviews = reviews.map((review, index) => {
-          return {
-            id: index,
-            phase: review.phase === 0 ? "Active" : "Accepted",
-            issuer: review.issuer,
-            reviewFileHash: review.reviewFileHash,
-            votingLink: review.votingLink,
-          };
-        });
-        setAllReviews(allReviews);
-        setPending(false);
-      }
-    };
     fetch();
   }, [contact, ethprovider]);
 
@@ -141,7 +193,9 @@ export function ReviewsModal({ open, onClose, title, id }) {
                 variant="h5"
                 textAlign="center"
               >
-                All the reviews for
+                {status !== "COMPLETE"
+                  ? "All Reviews for"
+                  : "Archived Reviews for"}
               </Typography>
 
               <Typography
@@ -157,29 +211,36 @@ export function ReviewsModal({ open, onClose, title, id }) {
                 {title}
               </Typography>
               <MyGrid data={allReviews} />
-              <Stack
-                direction="row"
-                alignItems="center"
-                spacing={1}
-                flexWrap="wrap"
-                justifyContent={"center"}
-                useFlexGap
-              >
-                <FileUploader
-                  handleChange={handleChangeIpFile}
-                  name="ip file"
-                />
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSubmit}
+              {status !== "COMPLETE" && (
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  spacing={1}
+                  flexWrap="wrap"
+                  justifyContent={"center"}
+                  useFlexGap
                 >
-                  Add Your Review
+                  <FileUploader
+                    handleChange={handleChangeIpFile}
+                    name="ip file"
+                  />
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleSubmit}
+                  >
+                    Add Your Review
+                  </Button>
+                </Stack>
+              )}
+              <Stack direction="row" alignItems="center" spacing={2}>
+                <Button variant="contained" color="success" onClick={fetch}>
+                  Refresh List
+                </Button>
+                <Button variant="contained" color="primary" onClick={onClose}>
+                  Close
                 </Button>
               </Stack>
-              <Button variant="outlined" color="primary" onClick={onClose}>
-                Close
-              </Button>
             </Stack>
           )}
         </Box>

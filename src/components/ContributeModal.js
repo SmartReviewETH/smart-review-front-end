@@ -1,13 +1,21 @@
-import {  Modal, Button, Box, Typography, Stack, TextField } from '@mui/material';
-import React from 'react';
-import { Modalstyle } from './styles/styles';
-import CircularIndeterminate from './LoadingCircle';
-import { EtherContext } from '../App';
-import AutohideSnackbar from './MySnackBar';
-import { convertEthertoWei } from '../utils/helper';
+import {
+  Modal,
+  Button,
+  Box,
+  Typography,
+  Stack,
+  TextField,
+  Link,
+} from "@mui/material";
+import React from "react";
+import { Modalstyle } from "./styles/styles";
+import CircularIndeterminate from "./LoadingCircle";
+import { EtherContext } from "../App";
+import AutohideSnackbar from "./MySnackBar";
+import { convertEthertoWei } from "../utils/helper";
 
-export function ContributeModal({ open, onClose, title, id }){
-  const { provider, walletAddress, SmartReviewContract } =
+export function ContributeModal({ open, onClose, title, id }) {
+  const { provider, walletAddress, SmartReviewContract, tokenContract } =
     React.useContext(EtherContext);
   const [pending, setPending] = React.useState(false);
   const [weiamount, setAmount] = React.useState("1");
@@ -25,30 +33,66 @@ export function ContributeModal({ open, onClose, title, id }){
     setContract(SmartReviewContract);
     setEthProvider(provider);
   }, [walletAddress, SmartReviewContract, provider]);
+  const handleApprove = async () => {
+    try {
+      const tx = await tokenContract.approve(
+        SmartReviewContract.address,
+        convertEthertoWei("100").toString()
+      );
+      const txlink = `https://sepolia.etherscan.io/tx/${tx.hash}`;
+      // alert
+      setMsg(
+        <div>
+          Approve Successfully! View tx on EtherScan:{" "}
+          <Link href={txlink} target="_blank" rel="noreferrer">
+            Link
+          </Link>
+        </div>
+      );
+      setOpenSnackBar(true);
+      setType("success");
+      setPending(false);
+    } catch (e) {
+      console.log(e);
+      setMsg(`approval Failure! User Rejected!`);
+      setOpenSnackBar(true);
+      setType("error");
+      setPending(false);
+      return;
+    }
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const EtherToWei = convertEthertoWei(weiamount);
-    console.log(EtherToWei.toString());
+    const EtherToWei = convertEthertoWei(weiamount).toString();
+    console.log(EtherToWei);
     // transfer smt tokens to the contract
     setPending(true);
+    if (tokenContract) {
+    }
     if (contact && ethprovider) {
       contact
-        .addBountyToSmartReview(id, EtherToWei.toString())
+        .addBountyToSmartReview(id, EtherToWei)
         .then((tx) => {
           //action prior to transaction being mined
-          ethprovider.waitForTransaction(tx.hash).then(() => {
-            //action after transaction is mined
-            console.log("transaction hash", tx.hash);
-            // alert
-            setMsg(
-              `Contribution made Successfully! Please refresh to see the update value. Transaction Hash: ${tx.hash}`
-            );
-            setOpenSnackBar(true);
-            setType("success");
-            //tx finished
-            setPending(false);
-            onClose();
-          });
+          //action after transaction is mined
+          console.log("transaction hash", tx.hash);
+          // alert
+          setType("success");
+          const txlink = `https://sepolia.etherscan.io/tx/${tx.hash}`;
+          // alert
+          setMsg(
+            <div>
+              Contribution made Successfully! View tx on EtherScan:{" "}
+              <Link href={txlink} target="_blank" rel="noreferrer">
+                Link
+              </Link>
+            </div>
+          );
+
+          setOpenSnackBar(true);
+          //tx finished
+          setPending(false);
+          onClose();
         })
         .catch((e) => {
           //action to perform when user clicks "reject"
@@ -105,6 +149,19 @@ export function ContributeModal({ open, onClose, title, id }){
               </Typography>
               <Stack direction="column" alignItems="center" spacing={1}>
                 <Typography variant="subtitle2" textAlign="center">
+                  Approve first to transfer SMT for contribution*
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleApprove}
+                >
+                  Approve
+                </Button>
+              </Stack>
+
+              <Stack direction="column" alignItems="center" spacing={1}>
+                <Typography variant="subtitle2" textAlign="center">
                   Type in the number of SMT tokens for Contribution (min of 1)*
                 </Typography>
                 <TextField
@@ -143,5 +200,4 @@ export function ContributeModal({ open, onClose, title, id }){
       </Modal>
     </>
   );
-};
-
+}
