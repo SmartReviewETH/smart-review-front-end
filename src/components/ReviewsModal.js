@@ -87,7 +87,6 @@ export function ReviewsModal({ open, onClose, title, id, status }) {
   React.useEffect(() => {
     fetch();
   }, [contact, ethprovider, govContract]);
-  const handleDelegation = async () => {};
   const handleSubmit = async () => {
     if (file === null) {
       // must upload both files
@@ -139,7 +138,9 @@ export function ReviewsModal({ open, onClose, title, id, status }) {
         );
       } catch (e) {
         console.log("error", e);
-        setMsg(`Review Submission Failure! Error in opening a Dao proposal!`);
+        setMsg(
+          `Review Submission Failure! This is likely caused by Delgation error! please go to Profile to delegate yourself first!`
+        );
         setOpenSnackBar(true);
         setType("error");
         onClose();
@@ -177,7 +178,7 @@ export function ReviewsModal({ open, onClose, title, id, status }) {
         .catch(() => {
           //action to perform when user clicks "reject"
           // alert
-          setMsg(`Review Submission Failure! User Rejected!`);
+          setMsg(`Review Submission Failure!User rejected`);
           setOpenSnackBar(true);
           setType("error");
           onClose();

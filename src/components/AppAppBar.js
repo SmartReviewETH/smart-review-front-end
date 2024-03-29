@@ -209,11 +209,18 @@ function AppAppBar({ mode, toggleColorMode }) {
 
                   <MenuItem
                     onClick={() => {
+                      navigate("smartReviewHub");
+                    }}
+                  >
+                    SmartReview Hub
+                  </MenuItem>
+                  {/* <MenuItem
+                    onClick={() => {
                       navigate("reviewHub");
                     }}
                   >
                     Review Hub
-                  </MenuItem>
+                  </MenuItem> */}
                   <MenuItem
                     onClick={() => {
                       navigate("profile");

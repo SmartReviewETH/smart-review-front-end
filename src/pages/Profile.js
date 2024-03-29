@@ -1,5 +1,5 @@
 import * as React from "react";
-import { alpha } from "@mui/material";
+import { Button, Card, CardActions, CardContent, alpha } from "@mui/material";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
@@ -15,12 +15,37 @@ export function convertBigNumberToEtherString(bigNumber) {
 }
 
 export default function Profile() {
-
-  const { provider,SmartReviewContract } = React.useContext(EtherContext);
-  const phaseMapping = {0:"ACTIVE", 1:"PAUSED", 2:"EXPIRED", 3:"PAID"}
+  const { walletAddress, provider, SmartReviewContract, tokenContract } =
+    React.useContext(EtherContext);
+  const phaseMapping = { 0: "ACTIVE", 1: "PAUSED", 2: "EXPIRED", 3: "PAID" };
   const [dataList, setDataList] = React.useState([]); // data from the contract
   const [isFetching, setIsFetching] = React.useState(true);
+  const [delegationmsg, setDelegationMsg] = React.useState("");
+  const [delegation, setDelegation] = React.useState(false);
 
+  React.useEffect(() => {
+    async function fetchData() {
+      if (!tokenContract || !walletAddress) return;
+      const tx = await tokenContract.delegates(walletAddress);
+      const tx2 = await tokenContract.getVotes(walletAddress);
+      const vp = converWeiToEther(tx2);
+      if (tx == 0x0000000000000000000000000000000000000000) {
+        setDelegation(false);
+        setDelegationMsg("You have not delegated your voting power");
+      } else {
+        setDelegation(true);
+        setDelegationMsg("You have " + vp + " SMT delegated to yourself");
+      }
+    }
+    fetchData();
+  }, [tokenContract, walletAddress]);
+  const handleAddDelegation = async () => {
+    try {
+      const tx = await tokenContract.delegate(walletAddress);
+    } catch (e) {
+      console.error(e);
+    }
+  };
   React.useEffect(() => {
     async function fetchData() {
       if (!SmartReviewContract) return;
@@ -43,10 +68,10 @@ export default function Profile() {
           const smartReview = await SmartReviewContract.getSmartReviewById(
             i.toString()
           );
-          
+
           let issuerFound = false;
           for (let j = 0; j < smartReview.issuers.length && !issuerFound; j++) {
-            issuerFound = (smartReview.issuers[j] == accountAddress);
+            issuerFound = smartReview.issuers[j] == accountAddress;
           } // ignore proposals not proposed by this message sender
           if (!issuerFound) continue;
 
@@ -88,15 +113,54 @@ export default function Profile() {
   }, [SmartReviewContract]);
 
   return (
-    <Box mb={2}>
-      <PageHeader
-        title_front={"Your"}
-        title_back={"Profile"}
-        subtitle={"This is your personal space for managing SmartReview."}
-      />
-      {!provider && <Typography variant="h4" textAlign="center">Opps, please connect to your wallet first to view all the contents here.</Typography>}
-      {isFetching && provider && (<Typography variant="h4" textAlign="center">Fetching data from the contract...</Typography>)}
-      {!isFetching && provider && (<ScrollableRowOfCards title={"My proposals"} proposals={dataList} />)}
-    </Box>
+    <>
+      <Stack direction="column" alignItems={"center"}>
+        <PageHeader
+          title_front={"Your"}
+          title_back={"Profile"}
+          subtitle={"This is your personal space for managing SmartReview."}
+        />
+        <Card>
+          <CardContent>
+            <Typography
+              id="modal-modal-title"
+              textAlign="center"
+              mb={2}
+              fontWeight={600}
+            >
+              Your voting Power
+            </Typography>
+            <Typography id="modal-modal-title" variant="h6" textAlign="center">
+              {delegationmsg}
+            </Typography>
+            {!delegation && (
+              <Stack sx={{ mt: 2, alignItems: "center" }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleAddDelegation}
+                >
+                  Delegate yourself
+                </Button>
+              </Stack>
+            )}
+          </CardContent>
+        </Card>
+      </Stack>
+      {!provider && (
+        <Typography variant="h4" textAlign="center">
+          Opps, please connect to your wallet first to view all the contents
+          here.
+        </Typography>
+      )}
+      {isFetching && provider && (
+        <Typography variant="h4" textAlign="center">
+          Fetching data from the contract...
+        </Typography>
+      )}
+      {!isFetching && provider && (
+        <ScrollableRowOfCards title={"My proposals"} proposals={dataList} />
+      )}
+    </>
   );
 }
