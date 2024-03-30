@@ -101,7 +101,7 @@ function BasicProposalCard({ item, index }) {
           >
             Download Files
           </Button>
-          {item.status !== "COMPLETE" && (
+          {item.status !== "COMPLETE" && item.deadline > current_time && (
             <Button size="small" variant="contained" onClick={handleOpen}>
               Contribute
             </Button>

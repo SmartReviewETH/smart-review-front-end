@@ -5,18 +5,20 @@ import { CardGrid } from "../components/CardGrid";
 import { EtherContext } from "../App";
 import { ethers } from "ethers";
 import { converWeiToEther } from "../utils/helper";
+import moment from "moment";
 
 export function convertBigNumberToEtherString(bigNumber) {
   return Number(bigNumber._hex);
 }
 export default function SmartReviewHubPage() {
-  const { provider,SmartReviewContract } = React.useContext(EtherContext);
+  const { provider, SmartReviewContract } = React.useContext(EtherContext);
   const phaseMapping = {
     0: "ACTIVE",
     1: "Fund Raising",
     2: "EXPIRED",
     3: "COMPLETE",
   };
+  const current_time = moment().unix();
   const [isFetching, setIsFetching] = React.useState(true);
   const [data, setData] = React.useState(); // data from the contract
   React.useEffect(() => {
@@ -48,6 +50,10 @@ export default function SmartReviewHubPage() {
           dataObj.deadline = convertBigNumberToEtherString(
             smartReview.deadline
           );
+          // if(dataObj.deadline < current_time){
+          //   dataObj.status = "EXPIRED";
+          // }
+
           dataObj.issuers = smartReview.issuers;
           dataObj.requirementsHash = smartReview.requirementsHash;
           dataObj.ipHash = smartReview.ipHash;
@@ -80,10 +86,18 @@ export default function SmartReviewHubPage() {
         title_back={"Hub"}
         subtitle="Central hub for the SmartReview community. Review or contribute to all the amazing works and earn rewards!"
       />
-      {!provider && <Typography variant="h4" textAlign="center">Opps, please connect to your wallet first to view all the contents here.</Typography>}
-      {isFetching && provider && (<Typography variant="h4" textAlign="center">Fetching data from the contract...</Typography>)}
-      {!isFetching && provider && (<CardGrid data_array={data}/>)}
-     
+      {!provider && (
+        <Typography variant="h4" textAlign="center">
+          Opps, please connect to your wallet first to view all the contents
+          here.
+        </Typography>
+      )}
+      {isFetching && provider && (
+        <Typography variant="h4" textAlign="center">
+          Fetching data from the contract...
+        </Typography>
+      )}
+      {!isFetching && provider && <CardGrid data_array={data} />}
     </Stack>
   );
 }
