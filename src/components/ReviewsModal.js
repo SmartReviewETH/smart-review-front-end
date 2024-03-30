@@ -15,11 +15,9 @@ import AutohideSnackbar from "./MySnackBar";
 import MyGrid from "./MyGrid";
 import { FileUploader } from "react-drag-drop-files";
 import { Ipfsuploader } from "../utils/helper";
-import { ethers, utils } from "ethers";
-import moment from "moment";
+import { utils } from "ethers";
 
 export function ReviewsModal({ open, onClose, title, id, status, data }) {
-  console.log(data.issuers[0]);
   const {
     walletAddress,
     provider,
