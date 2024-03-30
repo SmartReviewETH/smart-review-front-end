@@ -18,7 +18,8 @@ import { Ipfsuploader } from "../utils/helper";
 import { ethers, utils } from "ethers";
 import moment from "moment";
 
-export function ReviewsModal({ open, onClose, title, id, status }) {
+export function ReviewsModal({ open, onClose, title, id, status, data }) {
+  console.log(data.issuers[0]);
   const {
     walletAddress,
     provider,
@@ -240,7 +241,7 @@ export function ReviewsModal({ open, onClose, title, id, status }) {
               </Typography>
 
               <MyGrid data={allReviews} />
-              {status !== "COMPLETE" && (
+              {status !== "COMPLETE" && walletAddress !== data.issuers[0] && (
                 <Stack
                   direction="row"
                   alignItems="center"

@@ -79,6 +79,7 @@ export default function BasicCard({ data }) {
         title={data.title}
         id={data.id}
         status={data.status}
+        data={data}
       />
 
       <Grid key={data.id} minWidth={380} item xs={12} sm={4} md={4} padding={1}>

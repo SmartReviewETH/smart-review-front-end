@@ -52,6 +52,7 @@ function BasicProposalCard({ item, index }) {
         title={item.title}
         id={item.id}
         status={item.status}
+        data={item}
       />
 
       <Card key={index} sx={{ minWidth: 275, ml: 2, mr: 2 }}>
