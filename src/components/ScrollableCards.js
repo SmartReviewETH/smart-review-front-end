@@ -10,14 +10,16 @@ import {
 } from "@mui/material";
 import moment from "moment";
 import { ContributeModal } from "./ContributeModal";
+import { ReviewsModal } from './ReviewsModal';
 
 const convertUnixTimeToDate = (unixTime) => {
   let date = new Date(unixTime * 1000);
   return date.toLocaleString();
 };
 
-function BasicCard({ item, index }) {
+function BasicProposalCard({ item, index }) {
   const [open, setOpen] = React.useState(false);
+  const [openReview, setOpenReview] = React.useState(false);
   const current_time = moment().unix();
 
   const handleOpen = () => {
@@ -26,6 +28,12 @@ function BasicCard({ item, index }) {
   const handleClose = () => {
     setOpen(false);
   };
+  const handleOpenReview = () => {
+    setOpenReview(true);
+  }
+  const handleCloseReview = () => {
+    setOpenReview(false);
+  }
 
   return (
     <div>
@@ -35,6 +43,15 @@ function BasicCard({ item, index }) {
         key={"modal" + item.id}
         title={item.title}
         id={item.id}
+      />
+
+      <ReviewsModal
+        key={"Reviewmodal" + item.id}
+        open={openReview}
+        onClose={handleCloseReview}
+        title={item.title}
+        id={item.id}
+        status={item.status}
       />
 
       <Card key={index} sx={{ minWidth: 275, ml: 2, mr: 2 }}>
@@ -61,6 +78,17 @@ function BasicCard({ item, index }) {
         </CardContent>
 
         <CardActions>
+          {(item.status === "ACTIVE" || item.status === "COMPLETE") && (
+            <Button
+              size="small"
+              color="info"
+              variant="contained"
+              onClick={handleOpenReview}
+            >
+              Reviews
+            </Button>
+          )}
+
           <Button
             size="small"
             color="secondary"
@@ -88,9 +116,28 @@ function BasicCard({ item, index }) {
   );
 }
 
-function ScrollableRowOfCards({ title, proposals }) {
+function BasicReviewCard({ item, index }) {
+  return (
+    <Card key={index} sx={{ minWidth: 275, ml: 2, mr: 2 }}>
+        <CardContent>
+          <Typography gutterBottom variant="h5" component="div">
+            SmartReview Id: {item.smartReviewId}, Review Id: {item.reviewId}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Status: {item.status}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Review file hash: {item.reviewFileHash}
+          </Typography>
+
+        </CardContent>
+    </Card>
+  )
+}
+
+function ScrollableRowOfCards({ title, data, cardType }) {
   // Example array of items to display in cards. Replace with your actual data.
-  console.log("There are " + proposals.length + " proposals.");
+  console.log("There are " + data.length + " " + cardType + "(s).");
 
   return (
     <div>
@@ -110,9 +157,21 @@ function ScrollableRowOfCards({ title, proposals }) {
           width: "100%",
         }}
       >
-        {proposals.map((item, index) => {
-          return <BasicCard item={item} index={index} />;
-        })}
+        
+      {(() => {
+        if (cardType == "proposals") {
+          return data.map((item, index) => {
+            return <BasicProposalCard item={item} index={index} />;
+          });
+        } else if (cardType == "reviews") {
+            return data.map((item, index) => {
+              return <BasicReviewCard item={item} index={index} />;
+            });
+        } else {
+          return <p>Wrong type.</p>;
+        }
+      })()}
+        
       </Box>
     </div>
   );

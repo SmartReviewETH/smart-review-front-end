@@ -1,7 +1,5 @@
 import * as React from "react";
-import { Button, Card, CardActions, CardContent, alpha } from "@mui/material";
-import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
+import { Button, Card, CardContent } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import PageHeader from "../components/Pageheader";
@@ -14,11 +12,95 @@ export function convertBigNumberToEtherString(bigNumber) {
   return Number(bigNumber._hex);
 }
 
+async function updateProposalsList(SmartReviewContract, smartReviewcount, accountAddress, setProposalsList) {
+  const phaseMapping = { 0: "ACTIVE", 1: "PAUSED", 2: "EXPIRED", 3: "PAID" };
+
+  let allProposals = [];
+  for (let i = 0; i < smartReviewcount; i++) {
+    let dataObj = {};
+    try {
+      const smartReview = await SmartReviewContract.getSmartReviewById(
+        i.toString()
+      );
+
+      let issuerFound = false;
+      for (let j = 0; j < smartReview.issuers.length && !issuerFound; j++) {
+        issuerFound = smartReview.issuers[j] == accountAddress;
+      } // ignore proposals not proposed by this message sender
+      if (!issuerFound) continue;
+
+      dataObj.id = i;
+      dataObj.status = phaseMapping[smartReview.phase];
+      dataObj.title = smartReview.title || "No title provided";
+      dataObj.description =
+        smartReview.description || "No description provided";
+      let WeiToEther = convertBigNumberToEtherString(
+        smartReview.bountyAmount
+      );
+      WeiToEther = converWeiToEther(WeiToEther.toString());
+      dataObj.bountyAmount = WeiToEther;
+      dataObj.deadline = convertBigNumberToEtherString(
+        smartReview.deadline
+      );
+      dataObj.issuers = smartReview.issuers;
+      dataObj.requirementsHash = smartReview.requirementsHash;
+      dataObj.ipHash = smartReview.ipHash;
+      WeiToEther = convertBigNumberToEtherString(
+        smartReview.currentBalance
+      );
+      WeiToEther = converWeiToEther(WeiToEther.toString());
+
+      dataObj.currentBalance = WeiToEther;
+      dataObj.title = smartReview.info[0];
+      dataObj.description = smartReview.info[1];
+      allProposals.push(dataObj);
+    } catch (e) {
+      console.error(
+        `ERROR when fetching smart review id ${i}, SKIP!,\n the error is : ${e}`
+      );
+    }
+  }
+  setProposalsList(allProposals);
+}
+
+async function updateReviewsList(SmartReviewContract, smartReviewcount, accountAddress, setReviewsList) {
+  const phaseMapping = { 0: "ACTIVE", 1: "ACCEPTED" };
+
+  let allReviews = [];
+  for (let i = 0; i < smartReviewcount; i++) {
+    try {
+      let reviews = await SmartReviewContract.getReviewsBySmartReviewId(
+        i.toString()
+      );
+      for (let j = 0; j < reviews.length; j++) {
+        let review = reviews[j];
+        if (review.issuer != accountAddress) continue;
+        let dataObj = {};
+        
+        dataObj.smartReviewId = i;
+        dataObj.reviewId = j;
+        dataObj.issuer = review.issuer;
+        dataObj.reviewFileHash = review.reviewFileHash;
+        dataObj.status = phaseMapping[review.phase];
+
+        allReviews.push(dataObj);
+      }
+    } catch (e) {
+      console.error(
+        `ERROR when fetching reviews at smart review id ${i}, SKIP!,\n the error is : ${e}`
+      );
+    }
+  }
+
+  setReviewsList(allReviews);
+  console.log(allReviews);
+}
+
 export default function Profile() {
   const { walletAddress, provider, SmartReviewContract, tokenContract } =
     React.useContext(EtherContext);
-  const phaseMapping = { 0: "ACTIVE", 1: "PAUSED", 2: "EXPIRED", 3: "PAID" };
-  const [dataList, setDataList] = React.useState([]); // data from the contract
+  const [proposalsList, setProposalsList] = React.useState([]); // data from the contract
+  const [reviewsList, setReviewsList] = React.useState([]);
   const [isFetching, setIsFetching] = React.useState(true);
   const [delegationmsg, setDelegationMsg] = React.useState("");
   const [delegation, setDelegation] = React.useState(false);
@@ -62,8 +144,6 @@ export default function Profile() {
       if (!SmartReviewContract) return;
       console.log("fetching data from the contract");
 
-      let allData = [];
-
       const response = await SmartReviewContract.getSmartReviewsCount();
       const smartReviewcount = Number(response._hex);
       console.log("total smart reviews count: ", Number(response._hex));
@@ -73,52 +153,9 @@ export default function Profile() {
       // get the wallet address
       console.log("wallet address: " + accountAddress);
       // get all the smart reviews
-      for (let i = 0; i < smartReviewcount; i++) {
-        let dataObj = {};
-        try {
-          const smartReview = await SmartReviewContract.getSmartReviewById(
-            i.toString()
-          );
-
-          let issuerFound = false;
-          for (let j = 0; j < smartReview.issuers.length && !issuerFound; j++) {
-            issuerFound = smartReview.issuers[j] == accountAddress;
-          } // ignore proposals not proposed by this message sender
-          if (!issuerFound) continue;
-
-          dataObj.id = i;
-          dataObj.status = phaseMapping[smartReview.phase];
-          dataObj.title = smartReview.title || "No title provided";
-          dataObj.description =
-            smartReview.description || "No description provided";
-          let WeiToEther = convertBigNumberToEtherString(
-            smartReview.bountyAmount
-          );
-          WeiToEther = converWeiToEther(WeiToEther.toString());
-          dataObj.bountyAmount = WeiToEther;
-          dataObj.deadline = convertBigNumberToEtherString(
-            smartReview.deadline
-          );
-          dataObj.issuers = smartReview.issuers;
-          dataObj.requirementsHash = smartReview.requirementsHash;
-          dataObj.ipHash = smartReview.ipHash;
-          WeiToEther = convertBigNumberToEtherString(
-            smartReview.currentBalance
-          );
-          WeiToEther = converWeiToEther(WeiToEther.toString());
-
-          dataObj.currentBalance = WeiToEther;
-          dataObj.title = smartReview.info[0];
-          dataObj.description = smartReview.info[1];
-          allData.push(dataObj);
-        } catch (e) {
-          console.error(
-            `ERROR when fetching smart review id ${i}, SKIP!,\n the error is : ${e}`
-          );
-        }
-      }
+      updateProposalsList(SmartReviewContract, smartReviewcount, accountAddress, setProposalsList);
+      updateReviewsList(SmartReviewContract, smartReviewcount, accountAddress, setReviewsList);
       setIsFetching(false);
-      setDataList(allData);
     }
     fetchData();
   }, [SmartReviewContract]);
@@ -174,7 +211,10 @@ export default function Profile() {
         </Typography>
       )}
       {!isFetching && provider && (
-        <ScrollableRowOfCards title={"My proposals"} proposals={dataList} />
+        <ScrollableRowOfCards title={"My proposals"} data={proposalsList} cardType={"proposals"} />
+      )}
+      {!isFetching && provider && (
+        <ScrollableRowOfCards title={"My reviews"} data={reviewsList} cardType={"reviews"} />
       )}
     </>
   );
