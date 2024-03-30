@@ -180,7 +180,7 @@ export default function Profile() {
               mb={2}
               fontWeight={600}
             >
-              Your voting Power
+              My Voting Power
             </Typography>
             <Typography id="modal-modal-title" variant="h6" textAlign="center">
               {delegationmsg}
@@ -215,10 +215,18 @@ export default function Profile() {
         </Typography>
       )}
       {!isFetching && provider && (
-        <ScrollableRowOfCards title={"My proposals"} data={proposalsList} cardType={"proposals"} />
+        <ScrollableRowOfCards
+          title={"My proposals"}
+          data={proposalsList}
+          cardType={"proposals"}
+        />
       )}
       {!isFetching && provider && (
-        <ScrollableRowOfCards title={"My reviews"} data={reviewsList} cardType={"reviews"} />
+        <ScrollableRowOfCards
+          title={"My reviews"}
+          data={reviewsList}
+          cardType={"reviews"}
+        />
       )}
     </>
   );
