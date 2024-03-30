@@ -121,16 +121,29 @@ function BasicReviewCard({ item, index }) {
     <Card key={index} sx={{ minWidth: 275, ml: 2, mr: 2 }}>
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
-            SmartReview Id: {item.smartReviewId}, Review Id: {item.reviewId}
+            SmartReview Id {item.smartReviewId}
+          </Typography>
+          <Typography gutterBottom variant="h5" component="div">
+            Review Id {item.reviewId}
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Status: {item.status}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Review file hash: {item.reviewFileHash}
-          </Typography>
 
         </CardContent>
+      
+        <CardActions>
+        <Button
+            size="small"
+            color="secondary"
+            variant="contained"
+            onClick={() => {
+              window.open(`https://${item.reviewFileHash}.ipfs.dweb.link/`);
+            }}
+          >
+            Download Review
+          </Button>
+        </CardActions>
     </Card>
   )
 }
