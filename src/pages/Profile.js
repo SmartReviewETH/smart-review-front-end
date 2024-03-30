@@ -13,8 +13,12 @@ export function convertBigNumberToEtherString(bigNumber) {
 }
 
 async function updateProposalsList(SmartReviewContract, smartReviewcount, accountAddress, setProposalsList) {
-  const phaseMapping = { 0: "ACTIVE", 1: "PAUSED", 2: "EXPIRED", 3: "PAID" };
-
+  const phaseMapping = {
+    0: "ACTIVE",
+    1: "Fund Raising",
+    2: "EXPIRED",
+    3: "COMPLETE",
+  };
   let allProposals = [];
   for (let i = 0; i < smartReviewcount; i++) {
     let dataObj = {};
