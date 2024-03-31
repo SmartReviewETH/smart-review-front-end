@@ -172,43 +172,50 @@ export default function Profile() {
           title_back={"Profile"}
           subtitle={"This is your personal space for managing SmartReview."}
         />
-        <Card>
-          <CardContent>
-            <Typography
-              id="modal-modal-title"
-              textAlign="center"
-              mb={2}
-              fontWeight={600}
-            >
-              My Voting Power
-            </Typography>
-            <Typography id="modal-modal-title" variant="h6" textAlign="center">
-              {delegationmsg}
-            </Typography>
+        {!provider && (
+          <Typography variant="h4" textAlign="center">
+            Opps, please connect to your wallet first to view all the contents
+            here.
+          </Typography>
+        )}
+        {provider && (
+          <Card>
+            <CardContent>
+              <Typography
+                id="modal-modal-title"
+                textAlign="center"
+                mb={2}
+                fontWeight={600}
+              >
+                My Voting Power
+              </Typography>
+              <Typography
+                id="modal-modal-title"
+                variant="h6"
+                textAlign="center"
+              >
+                {delegationmsg}
+              </Typography>
 
-            <Stack sx={{ mt: 2, alignItems: "center" }}>
-              {!delegation && (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleAddDelegation}
-                >
-                  Delegate yourself
-                </Button>
-              )}
-              {/* <Button variant="contained" color="primary" onClick={getSMT}>
+              <Stack sx={{ mt: 2, alignItems: "center" }}>
+                {!delegation && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleAddDelegation}
+                  >
+                    Delegate yourself
+                  </Button>
+                )}
+                {/* <Button variant="contained" color="primary" onClick={getSMT}>
                 Get SMT
               </Button> */}
-            </Stack>
-          </CardContent>
-        </Card>
+              </Stack>
+            </CardContent>
+          </Card>
+        )}
       </Stack>
-      {!provider && (
-        <Typography variant="h4" textAlign="center">
-          Opps, please connect to your wallet first to view all the contents
-          here.
-        </Typography>
-      )}
+
       {isFetching && provider && (
         <Typography variant="h4" textAlign="center">
           Fetching data from the contract...
