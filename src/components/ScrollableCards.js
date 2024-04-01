@@ -136,7 +136,10 @@ function BasicReviewCard({ item, index }) {
             Review Id {item.reviewId}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Status: {item.status}
+            Review status: {item.review_status}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Voting proposal status: {item.voting_proposal_status}
           </Typography>
 
         </CardContent>

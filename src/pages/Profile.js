@@ -5,7 +5,6 @@ import Typography from "@mui/material/Typography";
 import PageHeader from "../components/Pageheader";
 import ScrollableRowOfCards from "../components/ScrollableCards";
 import { converWeiToEther } from "../utils/helper";
-
 import { EtherContext } from "../App";
 
 export function convertBigNumberToEtherString(bigNumber) {
@@ -67,35 +66,49 @@ async function updateProposalsList(SmartReviewContract, smartReviewcount, accoun
   setProposalsList(allProposals);
 }
 
-async function updateReviewsList(SmartReviewContract, smartReviewcount, accountAddress, setReviewsList) {
+async function updateReviewsList(SmartReviewContract, smartReviewcount, accountAddress, setReviewsList, governorContract) {
   const phaseMapping = { 0: "ACTIVE", 1: "ACCEPTED" };
 
-  let allReviews = [];
-  for (let i = 0; i < smartReviewcount; i++) {
-    try {
-      let reviews = await SmartReviewContract.getReviewsBySmartReviewId(
-        i.toString()
-      );
-      for (let j = 0; j < reviews.length; j++) {
-        let review = reviews[j];
-        if (review.issuer != accountAddress) continue;
-        let dataObj = {};
-        
-        dataObj.smartReviewId = i;
-        dataObj.reviewId = j;
-        dataObj.issuer = review.issuer;
-        dataObj.reviewFileHash = review.reviewFileHash;
-        dataObj.status = phaseMapping[review.phase];
-        dataObj.proposal_id = review.proposal_id;
+  const ProposalState = [
+    "Pending",
+    "Active",
+    "Canceled",
+    "Defeated",
+    "Succeeded",
+    "Queued",
+    "Expired",
+    "Executed",
+    "Not Found",
+  ];
 
-        allReviews.push(dataObj);
+    let allReviews = [];
+    for (let i = 0; i < smartReviewcount; i++) {
+      try {
+        let reviews = await SmartReviewContract.getReviewsBySmartReviewId(
+          i.toString()
+        );
+        for (let j = 0; j < reviews.length; j++) {
+          let review = reviews[j];
+          if (review.issuer != accountAddress) continue;
+          let state = await governorContract.state(review.proposal_id);
+          let dataObj = {};
+          
+          dataObj.smartReviewId = i;
+          dataObj.reviewId = j;
+          dataObj.issuer = review.issuer;
+          dataObj.reviewFileHash = review.reviewFileHash;
+          dataObj.review_status = phaseMapping[review.phase];
+          dataObj.proposal_id = review.proposal_id;
+          dataObj.voting_proposal_status = ProposalState[state];
+
+          allReviews.push(dataObj);
+        }
+      } catch (e) {
+        console.error(
+          `ERROR when fetching reviews at smart review id ${i}, SKIP!,\n the error is : ${e}`
+        );
       }
-    } catch (e) {
-      console.error(
-        `ERROR when fetching reviews at smart review id ${i}, SKIP!,\n the error is : ${e}`
-      );
     }
-  }
 
   setReviewsList(allReviews);
   console.log(allReviews);
@@ -106,9 +119,11 @@ export default function Profile() {
     walletAddress,
     provider,
     SmartReviewContract,
+    governorContract,
     tokenContract,
     facetContract,
   } = React.useContext(EtherContext);
+
   const [proposalsList, setProposalsList] = React.useState([]); // data from the contract
   const [reviewsList, setReviewsList] = React.useState([]);
   const [isFetching, setIsFetching] = React.useState(true);
@@ -169,7 +184,8 @@ export default function Profile() {
         SmartReviewContract,
         smartReviewcount,
         accountAddress,
-        setReviewsList
+        setReviewsList,
+        governorContract
       );
       setIsFetching(false);
     }
