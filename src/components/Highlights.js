@@ -14,15 +14,15 @@ import HubIcon from "@mui/icons-material/Hub";
 const items = [
   {
     icon: <HubIcon />,
-    title: "Truly decentralized",
+    title: "Decentralized and Anonymous",
     description:
-      "Experience true decentralization with on-chain governance, with no central authority.",
+      "Experience true decentralization with on-chain governance, with no central authority. Reviews are anonymous and censorship-resistant.",
   },
   {
     icon: <SettingsSuggestRoundedIcon />,
-    title: "Superb performance",
+    title: "Superb Review Quality",
     description:
-      "Our platform is designed to deliver exceptional performance, ensuring a seamless experience.",
+      "Our platform is designed to deliver exceptional review with our token-based voting system, get a unbiased review that is backed by our community!",
   },
   {
     icon: <ThumbUpAltRoundedIcon />,
@@ -34,13 +34,13 @@ const items = [
     icon: <AutoFixHighRoundedIcon />,
     title: "Innovative functionality",
     description:
-      "Discover innovative features that are designed to enhance your IPs review process.",
+      "Discover innovative features that are designed to enhance your review process.",
   },
   {
     icon: <SupportAgentRoundedIcon />,
     title: "community support",
     description:
-      "Join a community of like-minded individuals who are passionate about IPs and decentralization.",
+      "Join a community of like-minded individuals who are passionate about decentralization.",
   },
   {
     icon: <CurrencyBitcoinIcon />,
