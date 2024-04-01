@@ -86,6 +86,7 @@ async function updateReviewsList(SmartReviewContract, smartReviewcount, accountA
         dataObj.issuer = review.issuer;
         dataObj.reviewFileHash = review.reviewFileHash;
         dataObj.status = phaseMapping[review.phase];
+        dataObj.proposal_id = review.proposal_id;
 
         allReviews.push(dataObj);
       }

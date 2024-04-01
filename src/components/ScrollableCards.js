@@ -11,6 +11,8 @@ import {
 import moment from "moment";
 import { ContributeModal } from "./ContributeModal";
 import { ReviewsModal } from './ReviewsModal';
+import IconButton from '@mui/material/IconButton';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 const convertUnixTimeToDate = (unixTime) => {
   let date = new Date(unixTime * 1000);
@@ -33,7 +35,7 @@ function BasicProposalCard({ item, index }) {
   }
   const handleCloseReview = () => {
     setOpenReview(false);
-  }
+  };
 
   return (
     <div>
@@ -119,6 +121,11 @@ function BasicProposalCard({ item, index }) {
 }
 
 function BasicReviewCard({ item, index }) {
+  const handleClick = () => {
+    console.log("Clicked on proposal_id: " + item.proposal_id);
+    window.location.href = `https://www.tally.xyz/gov/test-78/proposal/${item.proposal_id}`;
+  };
+
   return (
     <Card key={index} sx={{ minWidth: 275, ml: 2, mr: 2 }}>
         <CardContent>
@@ -135,16 +142,19 @@ function BasicReviewCard({ item, index }) {
         </CardContent>
       
         <CardActions>
-        <Button
-            size="small"
-            color="secondary"
-            variant="contained"
-            onClick={() => {
-              window.open(`https://${item.reviewFileHash}.ipfs.dweb.link/`);
-            }}
-          >
-            Download Review
-          </Button>
+          <Button
+              size="small"
+              color="secondary"
+              variant="contained"
+              onClick={() => {
+                window.open(`https://${item.reviewFileHash}.ipfs.dweb.link/`);
+              }}
+            >
+              Download Review
+            </Button>
+            <IconButton aria-label="link" onClick={handleClick}>
+              <OpenInNewIcon />
+          </IconButton>
         </CardActions>
     </Card>
   )
