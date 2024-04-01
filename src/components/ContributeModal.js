@@ -54,7 +54,7 @@ export function ContributeModal({ open, onClose, title, id }) {
       setPending(false);
     } catch (e) {
       console.log(e);
-      setMsg(`approval Failure! User Rejected!`);
+      setMsg(`approval Failure!`);
       setOpenSnackBar(true);
       setType("error");
       setPending(false);
@@ -98,7 +98,7 @@ export function ContributeModal({ open, onClose, title, id }) {
           //action to perform when user clicks "reject"
           // alert
           console.log(e);
-          setMsg(`Contribution Failure! User Rejected!`);
+          setMsg(`Contribution Failure!`);
           setOpenSnackBar(true);
           setType("error");
           onClose();
@@ -149,7 +149,7 @@ export function ContributeModal({ open, onClose, title, id }) {
               </Typography>
               <Stack direction="column" alignItems="center" spacing={1}>
                 <Typography variant="subtitle2" textAlign="center">
-                  Approve first to transfer SMT for contribution*
+                  Approve first before making contribution*
                 </Typography>
                 <Button
                   variant="contained"
