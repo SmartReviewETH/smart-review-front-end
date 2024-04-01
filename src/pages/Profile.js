@@ -101,13 +101,18 @@ async function updateReviewsList(SmartReviewContract, smartReviewcount, accountA
 }
 
 export default function Profile() {
-  const { walletAddress, provider, SmartReviewContract, tokenContract } =
-    React.useContext(EtherContext);
+  const {
+    walletAddress,
+    provider,
+    SmartReviewContract,
+    tokenContract,
+    facetContract,
+  } = React.useContext(EtherContext);
   const [proposalsList, setProposalsList] = React.useState([]); // data from the contract
   const [reviewsList, setReviewsList] = React.useState([]);
   const [isFetching, setIsFetching] = React.useState(true);
   const [delegationmsg, setDelegationMsg] = React.useState("");
-  const [delegation, setDelegation] = React.useState(false);
+  const [delegation, setDelegation] = React.useState(null);
 
   React.useEffect(() => {
     async function fetchData() {
@@ -120,11 +125,7 @@ export default function Profile() {
         setDelegationMsg("You have not delegated your voting power");
       } else {
         setDelegation(true);
-        setDelegationMsg(
-          "You have " +
-            vp +
-            " SMT(need at least 1 SMT to vote and review) delegated to yourself "
-        );
+        setDelegationMsg("You have " + vp + " SMT delegated to yourself ");
       }
     }
     fetchData();
@@ -138,7 +139,7 @@ export default function Profile() {
   };
   const getSMT = async () => {
     try {
-      // const tx = await tokenContract.transferFrom(walletAddress);
+      const tx = await facetContract.getToken();
     } catch (e) {
       console.error(e);
     }
@@ -157,8 +158,18 @@ export default function Profile() {
       // get the wallet address
       console.log("wallet address: " + accountAddress);
       // get all the smart reviews
-      updateProposalsList(SmartReviewContract, smartReviewcount, accountAddress, setProposalsList);
-      updateReviewsList(SmartReviewContract, smartReviewcount, accountAddress, setReviewsList);
+      updateProposalsList(
+        SmartReviewContract,
+        smartReviewcount,
+        accountAddress,
+        setProposalsList
+      );
+      updateReviewsList(
+        SmartReviewContract,
+        smartReviewcount,
+        accountAddress,
+        setReviewsList
+      );
       setIsFetching(false);
     }
     fetchData();
@@ -166,9 +177,9 @@ export default function Profile() {
 
   return (
     <>
-      <Stack direction="column" alignItems={"center"}>
+      <Stack direction="column" alignItems={"center"} spacing={1}>
         <PageHeader
-          title_front={"Your"}
+          title_front={"My"}
           title_back={"Profile"}
           subtitle={"This is your personal space for managing SmartReview."}
         />
@@ -179,62 +190,81 @@ export default function Profile() {
           </Typography>
         )}
         {provider && (
-          <Card>
-            <CardContent>
-              <Typography
-                id="modal-modal-title"
-                textAlign="center"
-                mb={2}
-                fontWeight={600}
-              >
-                My Voting Power
-              </Typography>
-              <Typography
-                id="modal-modal-title"
-                variant="h6"
-                textAlign="center"
-              >
-                {delegationmsg}
-              </Typography>
+          <Stack direction="row" alignItems={"center"} spacing={2}>
+            <Card>
+              <CardContent>
+                <Typography
+                  id="modal-modal-title"
+                  textAlign="center"
+                  mb={2}
+                  fontWeight={600}
+                >
+                  Smart Token Faucet
+                </Typography>
 
-              <Stack sx={{ mt: 2, alignItems: "center" }}>
-                {!delegation && (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleAddDelegation}
-                  >
-                    Delegate yourself
+                <Stack sx={{ alignItems: "center" }} spacing={2}>
+                  <Button variant="outlined" color="success" onClick={getSMT}>
+                    Get SMT
                   </Button>
-                )}
-                {/* <Button variant="contained" color="primary" onClick={getSMT}>
-                Get SMT
-              </Button> */}
-              </Stack>
-            </CardContent>
-          </Card>
+                </Stack>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent>
+                <Typography
+                  id="modal-modal-title"
+                  textAlign="center"
+                  mb={2}
+                  fontWeight={600}
+                >
+                  My Voting Power(need at least 1 SMT)
+                </Typography>
+                <Typography
+                  id="modal-modal-title"
+                  variant="h6"
+                  textAlign="center"
+                >
+                  {delegationmsg}
+                </Typography>
+
+                <Stack sx={{ mt: 2, alignItems: "center" }} spacing={2}>
+                  {!delegation && (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleAddDelegation}
+                    >
+                      Delegate yourself
+                    </Button>
+                  )}
+                </Stack>
+              </CardContent>
+            </Card>
+          </Stack>
         )}
       </Stack>
-
-      {isFetching && provider && (
-        <Typography variant="h4" textAlign="center">
-          Fetching data from the contract...
-        </Typography>
-      )}
-      {!isFetching && provider && (
-        <ScrollableRowOfCards
-          title={"My proposals"}
-          data={proposalsList}
-          cardType={"proposals"}
-        />
-      )}
-      {!isFetching && provider && (
-        <ScrollableRowOfCards
-          title={"My reviews"}
-          data={reviewsList}
-          cardType={"reviews"}
-        />
-      )}
+      <Stack flexDirection={"column"} justifyContent="center">
+        {isFetching && provider && (
+          <Typography variant="h4" textAlign="center">
+            Fetching data from the contract...
+          </Typography>
+        )}
+        {!isFetching && provider && (
+          <ScrollableRowOfCards
+            title={"My proposals"}
+            data={proposalsList}
+            cardType={"proposals"}
+          />
+        )}
+        {!isFetching && provider && (
+          <ScrollableRowOfCards
+            title={"My reviews"}
+            data={reviewsList}
+            cardType={"reviews"}
+          />
+        )}
+      </Stack>
     </>
   );
 }

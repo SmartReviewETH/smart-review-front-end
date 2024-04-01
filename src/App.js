@@ -9,7 +9,6 @@ import Home from "./pages/Home";
 import ProfilePage from "./pages/Profile";
 import AppAppBar from "./components/AppAppBar";
 import SmartReviewHubPage from "./pages/HubSmartReview";
-import ReviewHubPage from "./pages/HubReview";
 import { useEther } from "./customHooks/UseEther";
 export const EtherContext = React.createContext(null);
 
@@ -21,6 +20,7 @@ export default function App() {
     smartReviewContract,
     governorContract,
     tokenContract,
+    facetContract,
   } = useEther();
   const [mode, setMode] = React.useState("light");
   const [showCustomTheme, setShowCustomTheme] = React.useState(true);
@@ -39,6 +39,7 @@ export default function App() {
         SmartReviewContract: smartReviewContract,
         governorContract: governorContract,
         tokenContract: tokenContract,
+        facetContract: facetContract,
       }}
     >
       <BrowserRouter>
