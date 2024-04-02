@@ -176,7 +176,7 @@ export default function Footer() {
         >
           <IconButton
             color="inherit"
-            href="https://github.com/vvvxxx321/Smart-Review"
+            href="https://github.com/SmartReviewETH"
             aria-label="GitHub"
             sx={{ alignSelf: "center" }}
           >
