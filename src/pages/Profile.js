@@ -11,62 +11,45 @@ export function convertBigNumberToEtherString(bigNumber) {
   return Number(bigNumber._hex);
 }
 
-async function updateProposalsList(SmartReviewContract, smartReviewcount, accountAddress, setProposalsList) {
+const buildSmartReviewObj = (smartReview, id) => {
   const phaseMapping = {
     0: "ACTIVE",
     1: "Fund Raising",
     2: "EXPIRED",
     3: "COMPLETE",
   };
-  let allProposals = [];
-  for (let i = 0; i < smartReviewcount; i++) {
-    let dataObj = {};
-    try {
-      const smartReview = await SmartReviewContract.getSmartReviewById(
-        i.toString()
-      );
 
-      let issuerFound = false;
-      for (let j = 0; j < smartReview.issuers.length && !issuerFound; j++) {
-        issuerFound = smartReview.issuers[j] == accountAddress;
-      } // ignore proposals not proposed by this message sender
-      if (!issuerFound) continue;
+  let dataObj = {};
 
-      dataObj.id = i;
-      dataObj.status = phaseMapping[smartReview.phase];
-      dataObj.title = smartReview.title || "No title provided";
-      dataObj.description =
-        smartReview.description || "No description provided";
-      let WeiToEther = convertBigNumberToEtherString(
-        smartReview.bountyAmount
-      );
-      WeiToEther = converWeiToEther(WeiToEther.toString());
-      dataObj.bountyAmount = WeiToEther;
-      dataObj.deadline = convertBigNumberToEtherString(
-        smartReview.deadline
-      );
-      dataObj.issuers = smartReview.issuers;
-      dataObj.requirementsHash = smartReview.requirementsHash;
-      dataObj.ipHash = smartReview.ipHash;
-      WeiToEther = convertBigNumberToEtherString(
-        smartReview.currentBalance
-      );
-      WeiToEther = converWeiToEther(WeiToEther.toString());
+  dataObj.id = id;
+  dataObj.status = phaseMapping[smartReview.phase];
+  dataObj.title = smartReview.title || "No title provided";
+  dataObj.description =
+    smartReview.description || "No description provided";
+  let WeiToEther = convertBigNumberToEtherString(
+    smartReview.bountyAmount
+  );
+  WeiToEther = converWeiToEther(WeiToEther.toString());
+  dataObj.bountyAmount = WeiToEther;
+  dataObj.deadline = convertBigNumberToEtherString(
+    smartReview.deadline
+  );
+  dataObj.issuers = smartReview.issuers;
+  dataObj.requirementsHash = smartReview.requirementsHash;
+  dataObj.ipHash = smartReview.ipHash;
+  WeiToEther = convertBigNumberToEtherString(
+    smartReview.currentBalance
+  );
+  WeiToEther = converWeiToEther(WeiToEther.toString());
 
-      dataObj.currentBalance = WeiToEther;
-      dataObj.title = smartReview.info[0];
-      dataObj.description = smartReview.info[1];
-      allProposals.push(dataObj);
-    } catch (e) {
-      console.error(
-        `ERROR when fetching smart review id ${i}, SKIP!,\n the error is : ${e}`
-      );
-    }
-  }
-  setProposalsList(allProposals);
-}
+  dataObj.currentBalance = WeiToEther;
+  dataObj.title = smartReview.info[0];
+  dataObj.description = smartReview.info[1];
 
-async function updateReviewsList(SmartReviewContract, smartReviewcount, accountAddress, setReviewsList, governorContract) {
+  return dataObj;
+};
+
+const constructReviewObj = (review, voting_state, smartReview, reviewId, smartReviewId) => {
   const phaseMapping = { 0: "ACTIVE", 1: "ACCEPTED" };
 
   const ProposalState = [
@@ -81,27 +64,60 @@ async function updateReviewsList(SmartReviewContract, smartReviewcount, accountA
     "Not Found",
   ];
 
+  let dataObj = {};
+  
+  dataObj.smartReviewId = smartReviewId;
+  dataObj.reviewId = reviewId;
+  dataObj.issuer = review.issuer;
+  dataObj.reviewFileHash = review.reviewFileHash;
+  dataObj.review_status = phaseMapping[review.phase];
+  dataObj.proposal_id = review.proposal_id;
+  dataObj.voting_proposal_status = ProposalState[voting_state];
+  dataObj.smartReview = buildSmartReviewObj(smartReview, smartReviewId);
+
+  return dataObj;
+}
+
+async function updateProposalsList(SmartReviewContract, smartReviewcount, accountAddress, setProposalsList) {
+  let allProposals = [];
+  for (let i = 0; i < smartReviewcount; i++) {
+    try {
+      const smartReview = await SmartReviewContract.getSmartReviewById(
+        i.toString()
+      );
+
+      let issuerFound = false;
+      for (let j = 0; j < smartReview.issuers.length && !issuerFound; j++) {
+        issuerFound = smartReview.issuers[j] == accountAddress;
+      } // ignore proposals not proposed by this message sender
+      if (!issuerFound) continue;
+
+      allProposals.push(buildSmartReviewObj(smartReview, i));
+    } catch (e) {
+      console.error(
+        `ERROR when fetching smart review id ${i}, SKIP!,\n the error is : ${e}`
+      );
+    }
+  }
+  setProposalsList(allProposals);
+}
+
+async function updateReviewsList(SmartReviewContract, smartReviewcount, accountAddress, setReviewsList, governorContract) {
     let allReviews = [];
     for (let i = 0; i < smartReviewcount; i++) {
       try {
         let reviews = await SmartReviewContract.getReviewsBySmartReviewId(
           i.toString()
         );
+        let smartReview = await SmartReviewContract.getSmartReviewById(
+          i.toString()
+        );
+
         for (let j = 0; j < reviews.length; j++) {
           let review = reviews[j];
           if (review.issuer != accountAddress) continue;
-          let state = await governorContract.state(review.proposal_id);
-          let dataObj = {};
-          
-          dataObj.smartReviewId = i;
-          dataObj.reviewId = j;
-          dataObj.issuer = review.issuer;
-          dataObj.reviewFileHash = review.reviewFileHash;
-          dataObj.review_status = phaseMapping[review.phase];
-          dataObj.proposal_id = review.proposal_id;
-          dataObj.voting_proposal_status = ProposalState[state];
-
-          allReviews.push(dataObj);
+          let voting_state = await governorContract.state(review.proposal_id);
+          allReviews.push(constructReviewObj(review, voting_state, smartReview, j, i));
         }
       } catch (e) {
         console.error(

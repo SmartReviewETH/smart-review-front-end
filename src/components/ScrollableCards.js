@@ -13,11 +13,7 @@ import { ContributeModal } from "./ContributeModal";
 import { ReviewsModal } from './ReviewsModal';
 import IconButton from '@mui/material/IconButton';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-
-const convertUnixTimeToDate = (unixTime) => {
-  let date = new Date(unixTime * 1000);
-  return date.toLocaleString();
-};
+import { SmartReviewModal } from './SmartReviewModal';
 
 function BasicProposalCard({ item, index }) {
   const [open, setOpen] = React.useState(false);
@@ -72,7 +68,7 @@ function BasicProposalCard({ item, index }) {
             Bounty: {item.bountyAmount} SMT | Balance: {item.currentBalance} SMT
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Deadline: {convertUnixTimeToDate(item.deadline)}
+            Deadline: {moment.unix(item.deadline).format("MM/DD/YYYY")}
           </Typography>
 
           <Typography variant="body1" sx={{ mt: 2 }}>
@@ -126,10 +122,33 @@ function BasicReviewCard({ item, index }) {
     window.location.href = `https://www.tally.xyz/gov/test-78/proposal/${item.proposal_id}`;
   };
 
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+
   return (
+    <>
+    <SmartReviewModal
+      open={open}
+      onClose={handleClose}
+      smartReview={item.smartReview}
+    />
+
     <Card key={index} sx={{ minWidth: 275, ml: 2, mr: 2 }}>
-        <CardContent>
-          <Typography gutterBottom variant="h5" component="div">
+      <CardContent>
+        <Typography
+              gutterBottom
+              variant="h5"
+              component="div"
+              onClick={handleOpen}
+              style={{ cursor: 'pointer' }}
+              color="primary"
+          >
             SmartReview Id {item.smartReviewId}
           </Typography>
           <Typography gutterBottom variant="h5" component="div">
@@ -160,6 +179,7 @@ function BasicReviewCard({ item, index }) {
           </IconButton>
         </CardActions>
     </Card>
+    </>
   )
 }
 
