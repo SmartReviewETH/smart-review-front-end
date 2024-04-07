@@ -29,7 +29,7 @@ export function CardGrid({ data_array }) {
 export default function BasicCard({ data }) {
   const { provider, SmartReviewContract } = React.useContext(EtherContext);
   const current_time = moment().unix();
-  // console.log(current_time);
+  const yesterday = moment().subtract(1, "days").unix();
   const [open, setOpen] = React.useState(false);
   const [openReview, setOpenReview] = React.useState(false);
   const [msg, setMsg] = React.useState();
@@ -133,7 +133,7 @@ export default function BasicCard({ data }) {
               >
                 Download Files
               </Button>
-              {data.status !== "COMPLETE" && data.deadline >= current_time && (
+              {data.status !== "COMPLETE" && data.deadline >= yesterday && (
                 <Button
                   size="small"
                   variant="contained"
