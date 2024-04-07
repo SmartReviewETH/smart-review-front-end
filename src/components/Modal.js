@@ -190,7 +190,7 @@ export default function InitiationModal() {
               </Stack>
               <Stack direction="column" alignItems="center" spacing={1}>
                 <Typography variant="subtitle2">
-                  Upload your IP file*
+                  Upload your SmartReview file*
                 </Typography>
                 <FileUploader
                   handleChange={handleChangeIpFile}
@@ -199,7 +199,7 @@ export default function InitiationModal() {
               </Stack>
               <Stack direction="column" alignItems="center" spacing={1}>
                 <Typography variant="subtitle2" textAlign="center">
-                  Upload Requirements file*
+                  Upload Requirements file (i.e. Rubric for expected reviews)*
                 </Typography>
                 <FileUploader
                   handleChange={handleChangeRqFile}
