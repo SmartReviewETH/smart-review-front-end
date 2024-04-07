@@ -13,7 +13,9 @@ export default function MyGrid({ data }) {
   };
   const handleOpenLink = (id) => {
     const proposal_id = data[id].proposalId;
-    window.open(`https://www.tally.xyz/gov/test-78/proposal/${proposal_id}`);
+    window.open(
+      `https://www.tally.xyz/gov/smartreview/proposal/${proposal_id}`
+    );
   };
   const columns = [
     { field: "phase", headerName: "Review Status", width: 180 },

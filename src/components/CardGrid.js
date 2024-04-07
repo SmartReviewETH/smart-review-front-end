@@ -132,7 +132,7 @@ export default function BasicCard({ data }) {
               >
                 Download Files
               </Button>
-              {data.status !== "COMPLETE" && data.deadline > current_time && (
+              {data.status !== "COMPLETE" && data.deadline >= current_time && (
                 <Button
                   size="small"
                   variant="contained"
@@ -141,7 +141,7 @@ export default function BasicCard({ data }) {
                   Contribute
                 </Button>
               )}
-              {data.status === "ACTIVE" && data.deadline < current_time && (
+              {data.status === "ACTIVE" && data.deadline <= current_time && (
                 <Button
                   size="small"
                   color="success"

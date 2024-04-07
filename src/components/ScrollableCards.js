@@ -119,7 +119,7 @@ function BasicProposalCard({ item, index }) {
 function BasicReviewCard({ item, index }) {
   const handleClick = () => {
     console.log("Clicked on proposal_id: " + item.proposal_id);
-    window.location.href = `https://www.tally.xyz/gov/test-78/proposal/${item.proposal_id}`;
+    window.location.href = `https://www.tally.xyz/gov/smartreview/proposal/${item.proposal_id}`;
   };
 
   const [open, setOpen] = React.useState(false);
