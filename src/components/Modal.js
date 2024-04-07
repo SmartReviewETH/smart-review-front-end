@@ -12,6 +12,7 @@ import AutohideSnackbar from "./MySnackBar";
 import { Ipfsuploader, convertEthertoWei } from "../utils/helper";
 import CircularIndeterminate from "./LoadingCircle";
 
+const fileTypes = ["JPG", "PNG", "JPEG"];
 export default function InitiationModal() {
   const date = new Date();
   const { provider, walletAddress, SmartReviewContract } =
@@ -194,6 +195,7 @@ export default function InitiationModal() {
                 </Typography>
                 <FileUploader
                   handleChange={handleChangeIpFile}
+                  types={fileTypes}
                   name="ip file"
                 />
               </Stack>
@@ -203,6 +205,7 @@ export default function InitiationModal() {
                 </Typography>
                 <FileUploader
                   handleChange={handleChangeRqFile}
+                  types={fileTypes}
                   name="requirement file"
                 />
               </Stack>

@@ -251,6 +251,7 @@ export function ReviewsModal({ open, onClose, title, id, status, data }) {
                 >
                   <FileUploader
                     handleChange={handleChangeIpFile}
+                    types={["JPG", "PNG", "JPEG"]}
                     name="ip file"
                   />
 
