@@ -42,7 +42,7 @@ export function useEther() {
       if (!provider) return;
       const signer = provider.getSigner();
       const contract = new ethers.Contract(
-        "0xd645F81279EA413e50c00DF7102B32b4E0640A41",
+        "0x58a4A0E2718Bffdf6d586D29334244edb3D94419",
         smartReviewContractAbi,
         signer
       );
@@ -54,7 +54,7 @@ export function useEther() {
       if (!provider) return;
       const signer = provider.getSigner();
       const contract = new ethers.Contract(
-        "0x8939843484975DD23b30951FEac7317335969ec3",
+        "0xCF19FcEf33cFd3f4b17220A3601DE37b36831923",
         GovernorContractAbi,
         signer
       );
