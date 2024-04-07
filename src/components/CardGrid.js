@@ -29,6 +29,7 @@ export function CardGrid({ data_array }) {
 export default function BasicCard({ data }) {
   const { provider, SmartReviewContract } = React.useContext(EtherContext);
   const current_time = moment().unix();
+  // console.log(current_time);
   const [open, setOpen] = React.useState(false);
   const [openReview, setOpenReview] = React.useState(false);
   const [msg, setMsg] = React.useState();

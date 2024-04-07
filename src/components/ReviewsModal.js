@@ -117,6 +117,7 @@ export function ReviewsModal({ open, onClose, title, id, status, data }) {
         allReviews.length,
         id,
       ]);
+      // console.log("contact address", contact.address);
       const proposal_id = await govContract.hashProposal(
         [contact.address],
         [0],
@@ -161,7 +162,7 @@ export function ReviewsModal({ open, onClose, title, id, status, data }) {
               Review Submitted Successfully! View Review tx on EtherScan:{" "}
               <Link href={reviewtxLink} target="_blank" rel="noreferrer">
                 Link
-              </Link>{" "}
+              </Link>
               || View Proposal tx on EtherScan:{" "}
               <Link href={proposaltxLink} target="_blank" rel="noreferrer">
                 Link
