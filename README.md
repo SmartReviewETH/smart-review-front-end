@@ -34,7 +34,7 @@ Js, React, ether.js, IPFS, vscode, MUI
 - open the site in localhost
 
 ## Status
-SmartReview is still in progress. Full version will be out soon.
+SmartReview is fully functional now, feel free to participate!
 
 ## Credits
 UI components:
