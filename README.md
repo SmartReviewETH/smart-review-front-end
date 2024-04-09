@@ -39,6 +39,7 @@ SmartReview is still in progress. Full version will be out soon.
 ## Credits
 UI components:
 - Material UI
+  
 List of contriubutors:
 - [Shiyu Xiu](https://www.linkedin.com/in/shiyu-oliver-xiu-6034771aa/)
 - [Junming Zhang](https://www.linkedin.com/in/junming-zhang-41ab6715b/)
