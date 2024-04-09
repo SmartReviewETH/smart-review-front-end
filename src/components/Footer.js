@@ -143,7 +143,7 @@ export default function Footer() {
           <Link color="text.secondary" href="#">
             Privacy
           </Link>
-          <Link color="text.secondary" href="#">
+          <Link color="text.secondary" href="mailto: xiushiyu666@gmail.com">
             Contact
           </Link>
         </Box>
@@ -176,7 +176,7 @@ export default function Footer() {
         >
           <IconButton
             color="inherit"
-            href="https://github.com/SmartReviewETH"
+            href="https://github.com/SmartReviewETH/Smart-Review"
             aria-label="GitHub"
             sx={{ alignSelf: "center" }}
           >
