@@ -38,7 +38,7 @@ SmartReview is fully functional now, feel free to participate!
 
 ## Credits
 UI components:
-- Material UI
+- some of the UI components are from Material UI.
   
 List of contriubutors:
 - [Shiyu Xiu](https://www.linkedin.com/in/shiyu-oliver-xiu-6034771aa/)
